@@ -1,0 +1,735 @@
+<title>In Loving Memory of Reina Canovas</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --serif: 'Hoefler Text', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --gold: #C47A22;
+    --gold-light: #D4922E;
+    --gold-stroke: rgba(180,110,30,0.35);
+    --gold-stroke-light: rgba(180,110,30,0.12);
+    --ivory: #FAF5EB;
+    --ivory-warm: #F5EEE0;
+    --text: #2a1a1a;
+    --text-mid: rgba(42,26,26,0.6);
+    --text-light: rgba(42,26,26,0.4);
+    --border: rgba(42,26,26,0.07);
+  }
+
+  body {
+    font-family: var(--sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    background: var(--ivory);
+    color: var(--text);
+    margin: 0;
+  }
+
+  /* ---------- sections ---------- */
+  section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ---------- sunflower canvas ---------- */
+  .sf-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  section > *:not(.sf-canvas) { position: relative; z-index: 1; }
+
+  /* ---------- divider ---------- */
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.35;
+    margin: 0 auto;
+    border: none;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    min-height: 100vh;
+    padding: 4rem 1.5rem 5rem;
+    gap: 1.2rem;
+    background: var(--ivory);
+  }
+  .hero-photo {
+    width: clamp(150px, 32vw, 220px);
+    height: clamp(150px, 32vw, 220px);
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(180,110,30,0.2);
+    box-shadow: 0 6px 30px rgba(42,26,26,0.1);
+  }
+  .hero-photo-placeholder {
+    width: clamp(150px, 32vw, 220px);
+    height: clamp(150px, 32vw, 220px);
+    border-radius: 50%;
+    border: 2px solid rgba(180,110,30,0.2);
+    box-shadow: 0 6px 30px rgba(42,26,26,0.08);
+    background: var(--ivory-warm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    color: var(--text-light);
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 7vw, 4.5rem);
+    font-weight: normal;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.15;
+    color: var(--text);
+  }
+  .hero .dates {
+    font-family: var(--serif);
+    font-size: clamp(0.85rem, 2.5vw, 1.15rem);
+    letter-spacing: 0.3em;
+    color: var(--text-mid);
+  }
+  .hero .hero-cta {
+    display: inline-block;
+    margin-top: 1.2rem;
+    padding: 0.95rem 2.5rem;
+    background: var(--gold);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    box-shadow: 0 4px 20px rgba(180,110,30,0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .hero .hero-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(180,110,30,0.35);
+  }
+
+  /* ---------- IMPACT ---------- */
+  .impact-section {
+    padding: 3rem 1.5rem 4rem;
+    background: var(--ivory-warm);
+  }
+  .impact-heading {
+    font-family: var(--serif);
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: normal;
+    letter-spacing: 0.06em;
+    margin-bottom: 1.5rem;
+    color: var(--text-mid);
+  }
+  .impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.8rem;
+    max-width: 520px;
+    width: 100%;
+  }
+  .impact-card {
+    background: var(--ivory);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1.2rem 0.8rem;
+    text-align: center;
+    transition: box-shadow 0.3s;
+  }
+  .impact-card:hover {
+    box-shadow: 0 4px 20px rgba(42,26,26,0.06);
+  }
+  .impact-amount {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+  .impact-desc {
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--text-mid);
+  }
+
+  /* ---------- STORY ---------- */
+  .story {
+    padding: 5rem 1.5rem;
+    background: var(--ivory);
+  }
+  .section-heading {
+    font-family: var(--serif);
+    font-size: clamp(1.2rem, 3vw, 1.65rem);
+    font-weight: normal;
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+  }
+  .story-text {
+    max-width: 580px;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    text-align: left;
+    color: var(--text);
+  }
+  .story-text p + p { margin-top: 1.3rem; }
+  .placeholder-note {
+    display: block;
+    margin-top: 2rem;
+    padding: 0.9rem 1rem;
+    background: rgba(180,110,30,0.06);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 0.4rem 0.4rem 0;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--text-light);
+  }
+
+  /* ---------- QUOTE ---------- */
+  .moment {
+    padding: 5rem 1.5rem;
+    background: var(--ivory-warm);
+  }
+  .moment blockquote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.15rem, 3.5vw, 1.75rem);
+    line-height: 1.9;
+    max-width: 440px;
+    border: none;
+    padding: 0;
+    color: var(--text);
+  }
+
+  /* ---------- VIDEO ---------- */
+  .video-wrap {
+    padding: 4rem 1.5rem;
+    background: var(--ivory);
+  }
+  .video-frame {
+    width: 100%;
+    max-width: 680px;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: var(--ivory-warm);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: var(--text-light);
+    position: relative;
+  }
+  .video-frame video, .video-frame iframe {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; border: none;
+  }
+  .video-frame video { object-fit: cover; }
+  .play-icon { font-size: 3rem; opacity: 0.3; margin-bottom: 0.5rem; }
+  .play-label { font-size: 0.95rem; opacity: 0.4; }
+  .dl-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.55rem 1.4rem;
+    border: 1px solid var(--text-light);
+    border-radius: 1.5rem;
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    color: var(--text-mid);
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .dl-link:hover { color: var(--text); border-color: var(--text-mid); }
+
+  /* ---------- GALLERY ---------- */
+  .gallery {
+    padding: 4rem 1.5rem;
+    background: var(--ivory);
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.65rem;
+    max-width: 720px;
+    width: 100%;
+  }
+  .photo-slot {
+    aspect-ratio: 4 / 3;
+    background: var(--ivory-warm);
+    border: 1px dashed rgba(180,110,30,0.15);
+    border-radius: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: rgba(180,110,30,0.2);
+    overflow: hidden;
+  }
+  .photo-slot img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+
+  /* ---------- FINAL CTA ---------- */
+  .support {
+    min-height: 70vh;
+    padding: 5rem 1.5rem 14rem;
+    background: var(--ivory-warm);
+  }
+  .support .label {
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 1.8rem;
+  }
+  .support h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: normal;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.5rem;
+  }
+  .support .appeal {
+    max-width: 460px;
+    font-size: 1.08rem;
+    line-height: 1.85;
+    margin-bottom: 2.5rem;
+    color: var(--text-mid);
+  }
+  .cta-main {
+    display: inline-block;
+    padding: 1.05rem 3rem;
+    background: var(--gold);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    box-shadow: 0 4px 20px rgba(180,110,30,0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .cta-main:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(180,110,30,0.35);
+  }
+  .support .footnote {
+    margin-top: 1.8rem;
+    font-size: 0.82rem;
+    color: var(--text-light);
+    max-width: 380px;
+  }
+
+  /* ---------- STICKY BAR ---------- */
+  #sticky-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(255,252,245,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    padding: 0.55rem 1.25rem 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  #sticky-bar.show { opacity: 1; transform: none; }
+  .sticky-progress { flex: 1; min-width: 0; }
+  .sticky-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.3rem;
+    font-size: 0.72rem;
+    color: var(--text-light);
+  }
+  .sticky-raised {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--gold);
+  }
+  .sticky-track {
+    width: 100%; height: 5px;
+    background: rgba(42,26,26,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .sticky-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 3px;
+    transition: width 1.5s ease;
+  }
+  .sticky-cta {
+    flex-shrink: 0;
+    padding: 0.65rem 1.4rem;
+    background: var(--gold);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 2rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    font-family: var(--sans);
+    white-space: nowrap;
+    box-shadow: 0 3px 12px rgba(180,110,30,0.2);
+    transition: filter 0.2s;
+    animation: pulse 3.5s ease-in-out infinite;
+  }
+  .sticky-cta:hover { filter: brightness(1.08); }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 3px 12px rgba(180,110,30,0.2); }
+    50%      { box-shadow: 0 3px 20px rgba(180,110,30,0.35); }
+  }
+
+  /* ---------- REVEAL ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(1.8rem);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-cta { animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 640px) {
+    .hero { min-height: 90vh; padding: 2.5rem 1.25rem 3rem; }
+    .impact-grid { grid-template-columns: repeat(2, 1fr); }
+    .story, .video-wrap, .gallery { padding: 3rem 1.25rem; }
+    .support { min-height: 60vh; padding-bottom: 10rem; }
+    .photo-grid { grid-template-columns: repeat(2, 1fr); }
+    #sticky-bar { padding: 0.5rem 1rem 0.6rem; gap: 0.75rem; }
+    .sticky-cta { padding: 0.6rem 1.1rem; font-size: 0.78rem; }
+    .sticky-meta { font-size: 0.65rem; }
+    .sticky-raised { font-size: 0.75rem; }
+  }
+</style>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <canvas class="sf-canvas" id="sf-hero" aria-hidden="true"></canvas>
+    <div class="hero-photo-placeholder" aria-label="Photo placeholder">RC</div>
+    <h1>Reina<br>Canovas</h1>
+    <p class="dates">March 15, 1961 &mdash; July 13, 2026</p>
+    <a class="hero-cta"
+       href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory"
+       target="_blank" rel="noopener">
+      Help Cover Reina's Memorial Costs
+    </a>
+  </section>
+
+  <!-- IMPACT -->
+  <section class="impact-section reveal">
+    <p class="impact-heading">Your Gift Makes a Difference</p>
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="impact-amount">$25</div>
+        <div class="impact-desc">Covers flowers for the service</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-amount">$75</div>
+        <div class="impact-desc">Helps with transportation costs</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-amount">$150</div>
+        <div class="impact-desc">Covers catering for the family</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-amount">$500</div>
+        <div class="impact-desc">Covers a full day of services</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- STORY -->
+  <section class="story">
+    <h2 class="section-heading reveal">Her Story</h2>
+    <div class="story-text reveal">
+      <p>Reina Canovas was born on March 15, 1961, and from her first breath, she filled every room with warmth and light. A devoted mother, a steadfast friend, and a woman who led with her heart, she lived each day with a generosity that touched everyone fortunate enough to know her.</p>
+      <p>Her love showed in the small, unforgettable ways&mdash;a warm meal ready before you knew you were hungry, an encouraging word exactly when you needed one, and always, always, sunflowers on the table. She believed that kindness was the greatest gift a person could give, and she gave it freely, without condition, every single day.</p>
+      <p>Reina passed away on July 13, 2026, leaving behind a family and community forever shaped by her light. She is survived by those who loved her most and who carry her spirit forward in everything they do.</p>
+      <span class="placeholder-note">Replace this placeholder with Reina's personal story&mdash;the memories, milestones, and moments that made her who she was.</span>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="moment">
+    <canvas class="sf-canvas" id="sf-quote" aria-hidden="true"></canvas>
+    <blockquote class="reveal">
+      She loved sunflowers.<br>
+      Her whole face lit up<br>
+      every time she saw them.
+    </blockquote>
+  </section>
+
+  <hr class="divider">
+
+  <!-- VIDEO -->
+  <section class="video-wrap">
+    <h2 class="section-heading reveal">Celebrating Her Life</h2>
+    <div class="video-frame reveal">
+      <div class="play-icon" aria-hidden="true">&#9654;</div>
+      <p class="play-label">Your video will appear here</p>
+    </div>
+    <a class="dl-link reveal" href="#" download>Download Video</a>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery">
+    <h2 class="section-heading reveal">Memories</h2>
+    <div class="photo-grid reveal">
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- FINAL CTA -->
+  <section class="support">
+    <canvas class="sf-canvas" id="sf-cta" aria-hidden="true"></canvas>
+    <p class="label reveal">Service &mdash; July 19, 2026</p>
+    <h2 class="reveal">Honor Her Memory</h2>
+    <p class="appeal reveal">
+      Reina spent her life giving everything to those she loved.
+      Now her family needs us.
+    </p>
+    <a class="cta-main reveal"
+       href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory"
+       target="_blank" rel="noopener">
+      Help Cover Reina's Memorial Costs
+    </a>
+    <p class="footnote reveal">
+      Every dollar goes directly toward funeral expenses and&nbsp;family&nbsp;support.
+    </p>
+  </section>
+
+</main>
+
+<!-- sticky bar -->
+<div id="sticky-bar">
+  <div class="sticky-progress">
+    <div class="sticky-meta">
+      <span class="sticky-raised">$4,250 raised</span>
+      <span>of $15,000</span>
+    </div>
+    <div class="sticky-track">
+      <div class="sticky-fill" style="width: 28%"></div>
+    </div>
+  </div>
+  <a class="sticky-cta"
+     href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory"
+     target="_blank" rel="noopener">
+    Donate Now
+  </a>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ======== LINE-ART SUNFLOWER ======== */
+
+  function drawLineFlower(ctx, cx, cy, size, opts) {
+    opts = opts || {};
+    var petalCount = opts.petals || 19;
+    var rotation = opts.rotation || 0;
+    var strokeColor = opts.stroke || 'rgba(180,110,30,0.18)';
+    var lineWidth = opts.lineWidth || 1.2;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    var petalLen = size * 0.46;
+    var centerR = size * 0.18;
+
+    // petals — each a single bezier curve stroke
+    for (var i = 0; i < petalCount; i++) {
+      var angle = (i / petalCount) * Math.PI * 2;
+      var tipX = Math.cos(angle) * petalLen;
+      var tipY = Math.sin(angle) * petalLen;
+
+      // control points create the petal's width
+      var spread = 0.22;
+      var cp1Angle = angle - spread;
+      var cp2Angle = angle + spread;
+      var cpDist = petalLen * 0.6;
+      var cp1x = Math.cos(cp1Angle) * cpDist;
+      var cp1y = Math.sin(cp1Angle) * cpDist;
+      var cp2x = Math.cos(cp2Angle) * cpDist;
+      var cp2y = Math.sin(cp2Angle) * cpDist;
+
+      // outward stroke
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(angle) * centerR * 0.9, Math.sin(angle) * centerR * 0.9);
+      ctx.bezierCurveTo(cp1x, cp1y, cp1x * 1.1, cp1y * 1.1, tipX, tipY);
+      ctx.stroke();
+
+      // return stroke (other side of petal)
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.bezierCurveTo(cp2x * 1.1, cp2y * 1.1, cp2x, cp2y,
+        Math.cos(angle) * centerR * 0.9, Math.sin(angle) * centerR * 0.9);
+      ctx.stroke();
+    }
+
+    // center circle
+    ctx.beginPath();
+    ctx.arc(0, 0, centerR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // inner spiral
+    ctx.beginPath();
+    var spiralTurns = 3;
+    for (var t = 0; t < spiralTurns * Math.PI * 2; t += 0.1) {
+      var sr = (t / (spiralTurns * Math.PI * 2)) * centerR * 0.85;
+      var sx = Math.cos(t) * sr;
+      var sy = Math.sin(t) * sr;
+      if (t === 0) ctx.moveTo(sx, sy);
+      else ctx.lineTo(sx, sy);
+    }
+    ctx.stroke();
+
+    // outer petal tips — tiny circles
+    for (var i = 0; i < petalCount; i++) {
+      var angle = (i / petalCount) * Math.PI * 2;
+      var tx = Math.cos(angle) * (petalLen + 2);
+      var ty = Math.sin(angle) * (petalLen + 2);
+      ctx.beginPath();
+      ctx.arc(tx, ty, 1.5, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  /* ======== CANVAS SETUP ======== */
+
+  function setupCanvas(id) {
+    var c = document.getElementById(id);
+    if (!c) return null;
+    var sec = c.parentElement;
+    var dpr = window.devicePixelRatio || 1;
+    var w = sec.offsetWidth;
+    var h = sec.offsetHeight;
+    c.width = w * dpr;
+    c.height = h * dpr;
+    c.style.width = w + 'px';
+    c.style.height = h + 'px';
+    var ctx = c.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx: ctx, w: w, h: h };
+  }
+
+  function renderHero() {
+    var s = setupCanvas('sf-hero');
+    if (!s) return;
+    var m = s.w < 640;
+
+    // large flower, bottom-right, bleeding off edge
+    drawLineFlower(s.ctx, s.w * 0.85, s.h * 0.78, m ? s.w * 0.55 : s.w * 0.38, {
+      petals: 21, rotation: 0.3, stroke: 'rgba(180,110,30,0.13)', lineWidth: 1.0
+    });
+
+    // small accent, top-left
+    drawLineFlower(s.ctx, s.w * 0.08, s.h * 0.12, m ? s.w * 0.22 : s.w * 0.15, {
+      petals: 15, rotation: -0.6, stroke: 'rgba(180,110,30,0.08)', lineWidth: 0.8
+    });
+  }
+
+  function renderQuote() {
+    var s = setupCanvas('sf-quote');
+    if (!s) return;
+    var m = s.w < 640;
+
+    // large centered flower behind quote
+    drawLineFlower(s.ctx, s.w * 0.5, s.h * 0.5, m ? s.w * 0.5 : s.w * 0.28, {
+      petals: 24, rotation: 0.12, stroke: 'rgba(180,110,30,0.1)', lineWidth: 1.0
+    });
+  }
+
+  function renderCta() {
+    var s = setupCanvas('sf-cta');
+    if (!s) return;
+    var m = s.w < 640;
+
+    // large flower, left side
+    drawLineFlower(s.ctx, s.w * 0.1, s.h * 0.55, m ? s.w * 0.5 : s.w * 0.32, {
+      petals: 19, rotation: -0.25, stroke: 'rgba(180,110,30,0.11)', lineWidth: 1.0
+    });
+
+    // small accent, top-right
+    if (!m) {
+      drawLineFlower(s.ctx, s.w * 0.92, s.h * 0.18, s.w * 0.13, {
+        petals: 14, rotation: 0.7, stroke: 'rgba(180,110,30,0.07)', lineWidth: 0.8
+      });
+    }
+  }
+
+  function renderAll() {
+    renderHero();
+    renderQuote();
+    renderCta();
+  }
+
+  /* ======== SCROLL / REVEAL ======== */
+
+  var stickyBar = document.getElementById('sticky-bar');
+  function onScroll() {
+    if (window.scrollY > window.innerHeight * 0.4) stickyBar.classList.add('show');
+    else stickyBar.classList.remove('show');
+  }
+
+  var reveals = document.querySelectorAll('.reveal');
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(function (el) { obs.observe(el); });
+
+  renderAll();
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', renderAll);
+})();
+</script>
