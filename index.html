@@ -1,6 +1,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>In Loving Memory of Reina Canovas</title>
+<meta name="description" content="A memorial for Reina Canovas (1961–2026). Share a memory, view photos, and support her family.">
+<meta property="og:title" content="In Loving Memory of Reina Canovas">
+<meta property="og:description" content="Reina spent her life giving everything to those she loved. Honor her memory and support her family.">
+<meta property="og:image" content="https://forreina.com/og-image.jpg">
+<meta property="og:url" content="https://forreina.com">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="In Loving Memory of Reina Canovas">
+<meta name="twitter:description" content="Reina spent her life giving everything to those she loved. Honor her memory and support her family.">
+<meta name="twitter:image" content="https://forreina.com/og-image.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -427,7 +438,7 @@
   /* ---------- GUESTBOOK ---------- */
   .guestbook {
     padding: 5rem 1.5rem;
-    background: var(--ivory-warm);
+    background: linear-gradient(180deg, var(--ivory-warm) 0%, #ece3d4 100%);
   }
   .guestbook-form {
     max-width: 500px;
@@ -491,7 +502,7 @@
     min-height: 1.2em;
   }
   .guestbook-messages {
-    max-width: 580px;
+    max-width: 620px;
     width: 100%;
     margin: 0 auto;
     display: flex;
@@ -504,6 +515,28 @@
     background: var(--ivory);
     border-radius: 0.5rem;
     border: 1px solid var(--border);
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .guestbook-bouquet {
+    flex-shrink: 0;
+    width: 76px;
+    min-height: 56px;
+    position: relative;
+  }
+  .bouquet-stem {
+    position: absolute;
+    bottom: 0;
+  }
+  .bouquet-stem svg {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+  }
+  .guestbook-entry-body {
+    flex: 1;
+    min-width: 0;
   }
   .guestbook-entry-name {
     font-family: var(--serif);
@@ -516,7 +549,27 @@
     line-height: 1.7;
     color: var(--text-mid);
     white-space: pre-wrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
+  .guestbook-entry-message.expanded {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+  .guestbook-show-more {
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    color: var(--gold);
+    background: none;
+    border: none;
+    padding: 0.2rem 0;
+    cursor: pointer;
+    margin-top: 0.2rem;
+    display: block;
+  }
+  .guestbook-show-more:hover { text-decoration: underline; }
   .guestbook-entry-date {
     font-size: 0.75rem;
     color: var(--text-light);
@@ -565,6 +618,392 @@
     font-size: 0.7rem;
     color: var(--text-light);
     font-style: italic;
+  }
+
+  /* ---------- PHOTO GALLERY ---------- */
+  .memorial-gallery {
+    padding: 3.5rem 1.5rem 3rem;
+    background: linear-gradient(180deg, #ddd3c3 0%, #E2D8C8 40%, var(--ivory-warm) 100%);
+    display: none;
+  }
+  .memorial-gallery.has-photos { display: flex; }
+  .mg-heading {
+    font-family: var(--serif);
+    font-size: clamp(1.2rem, 3vw, 1.65rem);
+    font-weight: normal;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+  .mg-sub {
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    font-style: italic;
+    margin-bottom: 2rem;
+  }
+  .mg-preview-wrap {
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto 1.5rem;
+  }
+  .mg-preview-frame {
+    background: #fff;
+    padding: 8px 8px 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
+    transform: rotate(-0.5deg);
+    position: relative;
+  }
+  .mg-preview-img-wrap {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    position: relative;
+    background: var(--ivory-warm);
+  }
+  .mg-preview-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0; left: 0;
+    transition: opacity 0.8s ease;
+  }
+  .mg-preview-img-wrap img.mg-fading { opacity: 0; }
+  .mg-preview-caption {
+    position: absolute;
+    bottom: 6px; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 0.78rem;
+    color: var(--text-mid);
+    font-style: italic;
+  }
+  .mg-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 1rem 0 1.5rem;
+  }
+  .mg-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.15);
+    transition: background 0.3s;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .mg-dot.active { background: var(--gold); }
+  .mg-wall {
+    display: flex;
+    gap: 1.2rem;
+    overflow-x: auto;
+    padding: 0.5rem 1rem 1.2rem;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.12) transparent;
+    max-width: 700px;
+    width: 100%;
+  }
+  .mg-wall::-webkit-scrollbar { height: 5px; }
+  .mg-wall::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+  .mg-card {
+    flex-shrink: 0;
+    background: #fff;
+    padding: 5px 5px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    transform: rotate(var(--rot, 0deg));
+  }
+  .mg-card:hover {
+    transform: rotate(0deg) scale(1.05) translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    z-index: 2;
+  }
+  .mg-card.active { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .mg-card img {
+    width: 110px; height: 110px;
+    object-fit: contain; display: block;
+    background: #fff;
+  }
+  .mg-card { position: relative; }
+  .mg-card-name {
+    text-align: center;
+    font-size: 0.62rem;
+    color: var(--text-light);
+    margin-top: 3px;
+    font-family: var(--serif);
+  }
+  .mg-card-stack {
+    position: absolute;
+    top: -6px; right: -6px;
+    min-width: 20px; height: 20px;
+    border-radius: 10px;
+    background: var(--gold);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    z-index: 3;
+  }
+  .mg-card.stacked::before,
+  .mg-card.stacked::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    z-index: -1;
+  }
+  .mg-card.stacked::before {
+    inset: 3px -3px -3px 3px;
+    transform: rotate(2deg);
+  }
+  .mg-card.stacked::after {
+    inset: 5px -5px -5px 5px;
+    transform: rotate(4deg);
+  }
+
+  /* ---------- FLOWER SHOWCASE ---------- */
+  .flower-showcase-sub {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    font-style: italic;
+    margin-bottom: 2rem;
+    max-width: 420px;
+  }
+  .flower-showcase {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+    max-width: 620px;
+    width: 100%;
+  }
+  .flower-showcase-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    width: 72px;
+  }
+  .flower-showcase-item svg {
+    width: 56px;
+    height: 56px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+  }
+  .flower-showcase-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    font-family: var(--sans);
+  }
+  @media (max-width: 480px) {
+    .flower-showcase-item { width: 60px; }
+    .flower-showcase-item svg { width: 44px; height: 44px; }
+    .flower-showcase-label { font-size: 0.52rem; }
+    .flower-showcase { gap: 0.4rem; }
+  }
+
+  /* Photos in guestbook entry */
+  .gb-entry-photos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+  }
+  .gb-entry-photo {
+    display: inline-block;
+    background: #fff;
+    padding: 3px 3px 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: rotate(var(--rot, 1deg));
+    cursor: pointer;
+  }
+  .gb-entry-photos.count-1 .gb-entry-photo img {
+    max-width: 200px; max-height: 220px;
+    width: auto; height: auto;
+    object-fit: contain; display: block;
+  }
+  .gb-entry-photos.count-2 .gb-entry-photo img {
+    width: 140px; height: 120px;
+    object-fit: cover; display: block;
+  }
+  .gb-entry-photos.count-many .gb-entry-photo img {
+    width: 110px; height: 100px;
+    object-fit: cover; display: block;
+  }
+
+  /* Photo upload in form */
+  .gb-photo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+  .gb-photo-btn {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    padding: 0.45rem 1.1rem;
+    border: 1px dashed var(--gold);
+    border-radius: 1.5rem;
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .gb-photo-btn:hover { background: rgba(196,122,34,0.06); }
+  .gb-photo-hint {
+    font-size: 0.75rem;
+    color: var(--text-light);
+  }
+  .gb-photo-thumbs {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .gb-photo-thumb-item {
+    position: relative;
+    display: inline-block;
+  }
+  .gb-photo-thumb-item img {
+    width: 64px; height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  .gb-photo-thumb-remove {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--text);
+    color: #fff;
+    border: none;
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* Lightbox */
+  .photo-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .photo-lightbox.open { opacity: 1; pointer-events: auto; }
+  .photo-lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+  .photo-lightbox-close {
+    position: absolute;
+    top: 1.5rem; right: 1.5rem;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .photo-lightbox-close:hover { background: rgba(255,255,255,0.3); }
+  .photo-lightbox-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: none;
+    font-size: 1.8rem;
+    line-height: 44px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: none;
+    z-index: 2001;
+  }
+  .photo-lightbox-arrow:hover { background: rgba(255,255,255,0.25); }
+  .photo-lightbox-arrow.visible { display: block; }
+  .photo-lightbox-prev { left: 1rem; }
+  .photo-lightbox-next { right: 1rem; }
+  .photo-lightbox-counter {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    display: none;
+  }
+  .photo-lightbox-counter.visible { display: block; }
+
+  @media (max-width: 640px) {
+    .mg-preview-frame { padding: 6px 6px 24px; }
+    .mg-card img { width: 85px; height: 85px; }
+    .mg-card { padding: 4px 4px 16px; }
+    .gb-entry-photos.count-1 .gb-entry-photo img { max-width: 140px; max-height: 160px; }
+    .gb-entry-photos.count-2 .gb-entry-photo img { width: 110px; height: 95px; }
+    .gb-entry-photos.count-many .gb-entry-photo img { width: 85px; height: 80px; }
+    .guestbook-bouquet { width: 60px; min-height: 48px; }
+  }
+
+  /* ---------- SOCIAL PROOF ---------- */
+  .social-proof-bar {
+    padding: 1.5rem 1.5rem;
+    background: var(--ivory);
+    text-align: center;
+  }
+  .social-proof-text {
+    font-family: var(--serif);
+    font-size: 0.92rem;
+    color: var(--text-mid);
+    letter-spacing: 0.03em;
+  }
+  .social-proof-text strong {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ---------- STORY COLLAPSE ---------- */
+  .story-collapsed { display: none; }
+  .story-toggle {
+    display: inline-block;
+    margin-top: 1.2rem;
+    padding: 0.55rem 1.6rem;
+    border: 1px solid var(--gold-stroke);
+    border-radius: 2rem;
+    background: transparent;
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    color: var(--gold);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.2s;
+  }
+  .story-toggle:hover {
+    background: rgba(180,110,30,0.06);
   }
 
   /* ---------- STICKY BAR ---------- */
@@ -666,6 +1105,8 @@
     .sticky-cta { padding: 0.6rem 1.1rem; font-size: 0.78rem; }
     .sticky-meta { font-size: 0.65rem; }
     .sticky-raised { font-size: 0.75rem; }
+    .guestbook-bouquet { width: 60px; min-height: 48px; }
+    .guestbook-entry { gap: 0.75rem; padding: 1rem; }
   }
 </style>
 
@@ -684,17 +1125,17 @@
     <a class="hero-cta" data-i18n="heroCta"
        href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory"
        target="_blank" rel="noopener">
-      Support Reina's Memorial
+      Honor Reina's Memory
     </a>
     <div class="scroll-hint">
-      <span class="scroll-hint-text" data-i18n="scrollHint">Reina's Story</span>
+      <span class="scroll-hint-text" data-i18n="scrollHint">Her Legacy</span>
       <div class="scroll-hint-line"></div>
     </div>
   </section>
 
   <!-- IMPACT -->
   <section class="impact-section reveal">
-    <p class="impact-heading" data-i18n="impactHeading">Your Gift Makes a Difference</p>
+    <p class="impact-heading" data-i18n="impactHeading">Every Gift Supports Reina's Family</p>
     <div class="impact-grid">
       <a class="impact-card" href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory/donate?amt=10" target="_blank" rel="noopener">
         <div class="impact-amount">$10</div>
@@ -706,34 +1147,85 @@
       </a>
       <a class="impact-card" href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory/donate?amt=50" target="_blank" rel="noopener">
         <div class="impact-amount">$50</div>
-        <div class="impact-desc" data-i18n="impact50">Covers flowers and service details</div>
+        <div class="impact-desc" data-i18n="impact50">Helps with ongoing expenses</div>
       </a>
       <a class="impact-card" href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory/donate?amt=100" target="_blank" rel="noopener">
         <div class="impact-amount">$100</div>
-        <div class="impact-desc" data-i18n="impact100">Supports cremation and memorial costs</div>
+        <div class="impact-desc" data-i18n="impact100">Eases the family's burden</div>
       </a>
       <a class="impact-card" href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory/donate?amt=200" target="_blank" rel="noopener">
         <div class="impact-amount">$200</div>
-        <div class="impact-desc" data-i18n="impact200">Contributes toward medical expenses</div>
+        <div class="impact-desc" data-i18n="impact200">Covers medical and memorial costs</div>
       </a>
       <a class="impact-card" href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory/donate?amt=500" target="_blank" rel="noopener">
         <div class="impact-amount">$500</div>
-        <div class="impact-desc" data-i18n="impact500">Makes a meaningful difference for the family</div>
+        <div class="impact-desc" data-i18n="impact500">Makes a meaningful difference</div>
       </a>
     </div>
   </section>
 
+  <!-- SOCIAL PROOF -->
+  <div class="social-proof-bar" id="social-proof-bar">
+    <p class="social-proof-text" id="social-proof-text"></p>
+  </div>
+
   <hr class="divider">
 
-  <!-- STORY -->
+  <!-- GUESTBOOK (moved up for social proof) -->
+  <section class="guestbook">
+    <canvas class="sf-canvas" id="sf-guestbook" aria-hidden="true"></canvas>
+    <h2 class="section-heading reveal" data-i18n="guestbookHeading">Memories &amp; Messages</h2>
+    <p class="flower-showcase-sub reveal" data-i18n="flowerSub">Each memory receives a unique bouquet &mdash; like flowers left at a memorial</p>
+    <div class="flower-showcase reveal" id="flower-showcase"></div>
+
+    <div class="guestbook-messages" id="guestbook-messages">
+      <p class="guestbook-empty" data-i18n="gbEmpty">Be the first to share a memory of Reina.</p>
+    </div>
+
+    <form class="guestbook-form reveal" id="guestbook-form">
+      <input type="text" id="gb-name" maxlength="100" placeholder="Your name" data-i18n-placeholder="gbNamePlaceholder" required>
+      <textarea id="gb-message" maxlength="2000" placeholder="Share a memory, a kind word, or a prayer..." data-i18n-placeholder="gbMessagePlaceholder" required></textarea>
+      <div class="gb-photo-area">
+        <button type="button" class="gb-photo-btn" id="gb-photo-btn" data-i18n="gbPhotoBtn">+ Add photos</button>
+        <span class="gb-photo-hint" id="gb-photo-hint" data-i18n="gbPhotoHint">Up to 5 photos</span>
+        <input type="file" id="gb-photo-input" accept="image/*" multiple style="display:none">
+        <div class="gb-photo-thumbs" id="gb-photo-thumbs"></div>
+      </div>
+      <p class="guestbook-status" id="gb-status"></p>
+      <button type="submit" class="guestbook-submit" id="gb-submit" data-i18n="gbSubmit">Share Your Memory</button>
+    </form>
+  </section>
+
+  <hr class="divider">
+
+  <!-- PHOTO GALLERY -->
+  <section class="memorial-gallery" id="memorial-gallery">
+    <h2 class="mg-heading section-heading reveal" data-i18n="galleryHeading">Memories in Pictures</h2>
+    <p class="mg-sub reveal" data-i18n="gallerySub">Photos shared by family and friends</p>
+    <div class="mg-preview-wrap reveal">
+      <div class="mg-preview-frame">
+        <div class="mg-preview-img-wrap" id="mg-preview"></div>
+        <p class="mg-preview-caption" id="mg-caption"></p>
+      </div>
+    </div>
+    <div class="mg-dots" id="mg-dots"></div>
+    <div class="mg-wall" id="mg-wall"></div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- STORY (collapsed) -->
   <section class="story">
     <h2 class="section-heading reveal" data-i18n="storyHeading">&#x1F1E8;&#x1F1FA; Reina's Story</h2>
     <div class="story-text reveal" data-i18n="storyBody">
       <p>At four years old, Reina left Santiago de Cuba with her grandparents Catalina and Domingo and began a new life in the United States. She grew up, graduated from City College in New York, then moved to Miami with her grandparents and started working at Mercy Hospital as an electrocardiogram technician&mdash;a role she would hold with quiet dedication for nearly four decades.</p>
-      <p>In 1988, a blind date introduced her to Leandro Canovas. They married, built a life together, and raised two sons, Jorge and Alexis. When grandchildren came&mdash;Alessandro, who she called &ldquo;Nene,&rdquo; and Gianluca, her &ldquo;Bebe&rdquo;&mdash;Reina found a new kind of joy. She never missed one of Nene&rsquo;s hockey tournaments, and every Sunday morning she took both boys to church.</p>
-      <p>After a courageous battle with cancer, Reina passed on July 13, 2026, at the age of 65. She is survived by her husband Leandro, her sons Jorge and Alexis, her grandchildren Alessandro and Gianluca, her father Freddy Sr., and her siblings Katy, Freddy, Whilmer, and Wayne.</p>
-      <p>Leandro recently retired, and the family is navigating funeral and medical expenses. Every contribution goes directly toward honoring the woman who spent her life showing up for everyone else.</p>
+      <div class="story-collapsed" id="story-rest">
+        <p>In 1988, a blind date introduced her to Leandro Canovas. They married, built a life together, and raised two sons, Jorge and Alexis. When grandchildren came&mdash;Alessandro, who she called &ldquo;Nene,&rdquo; and Gianluca, her &ldquo;Bebe&rdquo;&mdash;Reina found a new kind of joy. She never missed one of Nene&rsquo;s hockey tournaments, and every Sunday morning she took both boys to church.</p>
+        <p>After a courageous battle with cancer, Reina passed on July 13, 2026, at the age of 65. She is survived by her husband Leandro, her sons Jorge and Alexis, her grandchildren Alessandro and Gianluca, her father Freddy Sr., and her siblings Katy, Freddy, Whilmer, and Wayne.</p>
+        <p>Leandro recently retired, and the family is navigating medical and memorial expenses. Every contribution goes directly toward honoring the woman who spent her life showing up for everyone else.</p>
+      </div>
     </div>
+    <button class="story-toggle reveal" id="story-toggle" data-i18n="storyToggle">Read her full story</button>
   </section>
 
   <!-- QUOTE -->
@@ -748,53 +1240,33 @@
 
   <hr class="divider">
 
-  <!-- GOFUNDME EMBED -->
-  <section class="gfm-section">
-    <h2 class="section-heading reveal" data-i18n="donateHeading">Donate Directly</h2>
-    <div class="gfm-embed reveal">
-      <iframe src="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory/widget/large" scrolling="no" loading="lazy"></iframe>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- GUESTBOOK -->
-  <section class="guestbook">
-    <canvas class="sf-canvas" id="sf-guestbook" aria-hidden="true"></canvas>
-    <h2 class="section-heading reveal" data-i18n="guestbookHeading">Leave a Memory</h2>
-
-    <form class="guestbook-form reveal" id="guestbook-form">
-      <input type="text" id="gb-name" maxlength="100" placeholder="Your name" data-i18n-placeholder="gbNamePlaceholder" required>
-      <textarea id="gb-message" maxlength="2000" placeholder="Share a memory, a kind word, or a prayer..." data-i18n-placeholder="gbMessagePlaceholder" required></textarea>
-      <p class="guestbook-status" id="gb-status"></p>
-      <button type="submit" class="guestbook-submit" id="gb-submit" data-i18n="gbSubmit">Share</button>
-    </form>
-
-    <div class="guestbook-messages" id="guestbook-messages">
-      <p class="guestbook-empty" data-i18n="gbEmpty">Be the first to share a memory of Reina.</p>
-    </div>
-  </section>
-
-  <hr class="divider">
-
   <!-- FINAL CTA -->
   <section class="support">
     <canvas class="sf-canvas" id="sf-cta" aria-hidden="true"></canvas>
-    <p class="label reveal" data-i18n="serviceDate">Caballero Rivero Hialeah &mdash; July 19, 2026 &mdash; 1:00 PM</p>
-    <h2 class="reveal" data-i18n="honorHeading">Honor Her Memory</h2>
+    <p class="label reveal" data-i18n="serviceDate">In Loving Memory</p>
+    <h2 class="reveal" data-i18n="honorHeading">Honor Her Legacy</h2>
     <p class="appeal reveal" data-i18n="appealText">
-      Reina spent her life giving everything to those she loved.
-      Now it's our turn to show up for her family.
+      Reina gave everything to those she loved.
+      Now we show up for the family she left behind.
     </p>
     <a class="cta-main reveal" data-i18n="ctaMain"
        href="https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory"
        target="_blank" rel="noopener">
-      Support Reina's Memorial
+      Support Reina's Family
     </a>
     <p class="footnote reveal" data-i18n="footnote">
       All contributions go directly toward memorial and&nbsp;family&nbsp;expenses.
     </p>
   </section>
+
+  <!-- PHOTO LIGHTBOX -->
+  <div class="photo-lightbox" id="photo-lightbox">
+    <button class="photo-lightbox-close" id="lightbox-close">&times;</button>
+    <button class="photo-lightbox-arrow photo-lightbox-prev" id="lightbox-prev">&#8249;</button>
+    <img id="lightbox-img" src="" alt="">
+    <button class="photo-lightbox-arrow photo-lightbox-next" id="lightbox-next">&#8250;</button>
+    <div class="photo-lightbox-counter" id="lightbox-counter"></div>
+  </div>
 
 </main>
 
@@ -1000,7 +1472,11 @@
   renderAll();
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', renderAll);
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(renderAll, 120);
+  });
 })();
 </script>
 
@@ -1009,67 +1485,83 @@
   var translations = {
     en: {
       dates: 'March 15, 1961 — July 13, 2026',
-      heroCta: "Support Reina's Memorial",
-      scrollHint: "Reina's Story",
-      impactHeading: 'Your Gift Makes a Difference',
+      heroCta: "Honor Reina's Memory",
+      scrollHint: "Her Legacy",
+      impactHeading: 'Every Gift Supports Reina\'s Family',
       impact10: 'Every gift matters',
       impact25: 'Supports the family directly',
-      impact50: 'Covers flowers and service details',
-      impact100: 'Supports cremation and memorial costs',
-      impact200: 'Contributes toward medical expenses',
-      impact500: 'Makes a meaningful difference for the family',
+      impact50: 'Helps with ongoing expenses',
+      impact100: 'Eases the family\'s burden',
+      impact200: 'Covers medical and memorial costs',
+      impact500: 'Makes a meaningful difference',
       storyHeading: "🇨🇺 Reina's Story",
       storyBody: '<p>At four years old, Reina left Santiago de Cuba with her grandparents Catalina and Domingo and began a new life in the United States. She grew up, graduated from City College in New York, then moved to Miami with her grandparents and started working at Mercy Hospital as an electrocardiogram technician—a role she would hold with quiet dedication for nearly four decades.</p><p>In 1988, a blind date introduced her to Leandro Canovas. They married, built a life together, and raised two sons, Jorge and Alexis. When grandchildren came—Alessandro, who she called \"Nene,\" and Gianluca, her \"Bebe\"—Reina found a new kind of joy. She never missed one of Nene&#39;s hockey tournaments, and every Sunday morning she took both boys to church.</p><p>After a courageous battle with cancer, Reina passed on July 13, 2026, at the age of 65. She is survived by her husband Leandro, her sons Jorge and Alexis, her grandchildren Alessandro and Gianluca, her father Freddy Sr., and her siblings Katy, Freddy, Whilmer, and Wayne.</p><p>Leandro recently retired, and the family is navigating funeral and medical expenses. Every contribution goes directly toward honoring the woman who spent her life showing up for everyone else.</p>',
-      donateHeading: 'Donate Directly',
-      serviceDate: 'Caballero Rivero Hialeah — July 19, 2026 — 1:00 PM',
-      honorHeading: 'Honor Her Memory',
-      appealText: "Reina spent her life giving everything to those she loved. Now it's our turn to show up for her family.",
-      ctaMain: "Support Reina's Memorial",
+      serviceDate: 'In Loving Memory',
+      honorHeading: 'Honor Her Legacy',
+      appealText: "Reina gave everything to those she loved. Now we show up for the family she left behind.",
+      ctaMain: "Support Reina's Family",
       footnote: 'All contributions go directly toward memorial and family expenses.',
       stickyRaised: 'Support Reina',
       stickyGoal: 'our goal',
       donateNow: 'Donate Now',
-      guestbookHeading: 'Leave a Memory',
+      guestbookHeading: 'Memories & Messages',
+      storyToggle: 'Read her full story',
       gbNamePlaceholder: 'Your name',
       gbMessagePlaceholder: 'Share a memory, a kind word, or a prayer...',
-      gbSubmit: 'Share',
+      gbSubmit: 'Share Your Memory',
       gbEmpty: 'Be the first to share a memory of Reina.',
       gbSending: 'Sharing...',
       gbSuccess: 'Thank you for sharing.',
       gbError: 'Something went wrong. Please try again.',
-      gbBlocked: 'Please keep your message respectful.'
+      gbBlocked: 'Please keep your message respectful.',
+      flowerSub: 'Each memory receives a unique bouquet — like flowers left at a memorial',
+      gbPhotoBtn: '+ Add photos',
+      gbPhotoHint: 'Up to 5 photos',
+      gbUploading: 'Uploading photos...',
+      galleryHeading: 'Memories in Pictures',
+      gallerySub: 'Photos shared by family and friends',
+      showMore: 'Show more',
+      showLess: 'Show less'
     },
     es: {
       dates: '15 de marzo, 1961 — 13 de julio, 2026',
-      heroCta: 'Apoya el Memorial de Reina',
-      scrollHint: 'La Historia de Reina',
-      impactHeading: 'Tu Donación Hace la Diferencia',
+      heroCta: 'Honra la Memoria de Reina',
+      scrollHint: 'Su Legado',
+      impactHeading: 'Cada Donación Apoya a la Familia de Reina',
       impact10: 'Cada regalo cuenta',
       impact25: 'Apoya a la familia directamente',
-      impact50: 'Cubre flores y detalles del servicio',
-      impact100: 'Apoya los costos de cremación y memorial',
-      impact200: 'Contribuye a los gastos médicos',
-      impact500: 'Hace una diferencia significativa para la familia',
+      impact50: 'Ayuda con gastos continuos',
+      impact100: 'Alivia la carga familiar',
+      impact200: 'Cubre gastos médicos y del memorial',
+      impact500: 'Hace una diferencia significativa',
       storyHeading: '🇨🇺 La Historia de Reina',
       storyBody: '<p>A los cuatro años, Reina dejó Santiago de Cuba junto a sus abuelos Catalina y Domingo para comenzar una nueva vida en los Estados Unidos. Creció, se graduó del City College en Nueva York, y luego se mudó a Miami con sus abuelos, donde comenzó a trabajar en el Mercy Hospital como técnica de electrocardiogramas—un rol que desempeñó con silenciosa dedicación durante casi cuatro décadas.</p><p>En 1988, una cita a ciegas la presentó a Leandro Canovas. Se casaron, construyeron una vida juntos y criaron a dos hijos, Jorge y Alexis. Cuando llegaron los nietos—Alessandro, a quien llamaba "Nene," y Gianluca, su "Bebe"—Reina encontró una nueva alegría. Nunca se perdió un torneo de hockey de Nene, y cada domingo por la mañana llevaba a ambos niños a la iglesia.</p><p>Después de una valiente lucha contra el cáncer, Reina falleció el 13 de julio de 2026, a los 65 años. Le sobreviven su esposo Leandro, sus hijos Jorge y Alexis, sus nietos Alessandro y Gianluca, su padre Freddy Sr., y sus hermanos Katy, Freddy, Whilmer y Wayne.</p><p>Leandro se jubiló recientemente, y la familia enfrenta gastos de funeral y médicos. Cada contribución va directamente a honrar a la mujer que pasó su vida dando todo por los demás.</p>',
-      donateHeading: 'Dona Directamente',
-      serviceDate: 'Caballero Rivero Hialeah — 19 de julio, 2026 — 1:00 PM',
-      honorHeading: 'Honra Su Memoria',
-      appealText: 'Reina pasó su vida dando todo a quienes amaba. Ahora es nuestro turno de apoyar a su familia.',
-      ctaMain: 'Apoya el Memorial de Reina',
+      serviceDate: 'En Memoria Amorosa',
+      honorHeading: 'Honra Su Legado',
+      appealText: 'Reina dio todo a quienes amaba. Ahora apoyamos a la familia que dejó.',
+      ctaMain: 'Apoya a la Familia de Reina',
       footnote: 'Todas las contribuciones van directamente a gastos del memorial y la familia.',
       stickyRaised: 'Apoya a Reina',
       stickyGoal: 'nuestra meta',
       donateNow: 'Dona Ahora',
-      guestbookHeading: 'Deja un Recuerdo',
+      guestbookHeading: 'Recuerdos y Mensajes',
+      storyToggle: 'Lee su historia completa',
       gbNamePlaceholder: 'Tu nombre',
       gbMessagePlaceholder: 'Comparte un recuerdo, unas palabras o una oración...',
-      gbSubmit: 'Compartir',
+      gbSubmit: 'Comparte Tu Recuerdo',
       gbEmpty: 'Sé el primero en compartir un recuerdo de Reina.',
       gbSending: 'Enviando...',
       gbSuccess: 'Gracias por compartir.',
       gbError: 'Algo salió mal. Inténtalo de nuevo.',
-      gbBlocked: 'Por favor, mantén tu mensaje respetuoso.'
+      gbBlocked: 'Por favor, mantén tu mensaje respetuoso.',
+      flowerSub: 'Cada recuerdo recibe un ramo único — como flores dejadas en un memorial',
+      gbPhotoBtn: '+ Agregar fotos',
+      gbPhotoHint: 'Hasta 5 fotos',
+      gbUploading: 'Subiendo fotos...',
+      galleryHeading: 'Recuerdos en Fotos',
+      gallerySub: 'Fotos compartidas por familia y amigos',
+      showMore: 'Ver más',
+      showLess: 'Ver menos'
     }
   };
 
@@ -1094,7 +1586,15 @@
     });
     document.documentElement.lang = lang;
     window._currentLang = lang;
-    if (window._campaignData) updateCampaign(window._campaignData);
+    if (window._campaignData) {
+      updateCampaign(window._campaignData);
+      updateSocialProof(window._campaignData);
+    }
+    var _sr = document.getElementById('story-rest');
+    var _st = document.getElementById('story-toggle');
+    if (_sr && _sr.style.display !== 'block' && _st) {
+      _st.textContent = t.storyToggle || 'Read her full story';
+    }
   }
 
   document.querySelectorAll('.lang-btn').forEach(function (btn) {
@@ -1123,9 +1623,43 @@
       if (data && !data.error) {
         window._campaignData = data;
         updateCampaign(data);
+        updateSocialProof(data);
       }
     })
     .catch(function () {});
+
+  /* ======== SOCIAL PROOF BAR ======== */
+  function updateSocialProof(data) {
+    var lang = window._currentLang || 'en';
+    var el = document.getElementById('social-proof-text');
+    if (!el) return;
+    var count = data.donorCount || 0;
+    if (count > 0) {
+      el.innerHTML = lang === 'es'
+        ? '<strong>' + count + ' personas</strong> han honrado la memoria de Reina'
+        : '<strong>' + count + ' people</strong> have honored Reina\'s memory';
+    } else {
+      el.innerHTML = lang === 'es'
+        ? 'Honra la memoria de Reina con tu contribución'
+        : 'Honor Reina\'s memory with your contribution';
+    }
+  }
+
+  /* ======== STORY TOGGLE ======== */
+  var storyToggle = document.getElementById('story-toggle');
+  var storyRest = document.getElementById('story-rest');
+  if (storyToggle && storyRest) {
+    storyToggle.addEventListener('click', function () {
+      var lang = window._currentLang || 'en';
+      var showing = storyRest.style.display === 'block';
+      storyRest.style.display = showing ? 'none' : 'block';
+      if (showing) {
+        storyToggle.textContent = lang === 'es' ? 'Lee su historia completa' : 'Read her full story';
+      } else {
+        storyToggle.textContent = lang === 'es' ? 'Cerrar' : 'Close';
+      }
+    });
+  }
 
   /* ======== GUESTBOOK ======== */
 
@@ -1140,6 +1674,89 @@
   var editingId = null;
   var editingToken = null;
   var timerInterval = null;
+
+  var gbPhotoBtn = document.getElementById('gb-photo-btn');
+  var gbPhotoInput = document.getElementById('gb-photo-input');
+  var gbPhotoThumbs = document.getElementById('gb-photo-thumbs');
+  var gbPhotoHint = document.getElementById('gb-photo-hint');
+  var selectedPhotoFiles = [];
+  var MAX_PHOTOS = 5;
+
+  function renderPhotoThumbs() {
+    gbPhotoThumbs.innerHTML = '';
+    selectedPhotoFiles.forEach(function (file, idx) {
+      var wrap = document.createElement('div');
+      wrap.className = 'gb-photo-thumb-item';
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.alt = '';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'gb-photo-thumb-remove';
+      btn.textContent = '×';
+      btn.addEventListener('click', function () {
+        selectedPhotoFiles.splice(idx, 1);
+        renderPhotoThumbs();
+      });
+      wrap.appendChild(img);
+      wrap.appendChild(btn);
+      gbPhotoThumbs.appendChild(wrap);
+    });
+    var lang = window._currentLang || 'en';
+    if (selectedPhotoFiles.length >= MAX_PHOTOS) {
+      gbPhotoBtn.style.display = 'none';
+      gbPhotoHint.textContent = lang === 'es' ? 'Máximo alcanzado' : 'Maximum reached';
+    } else {
+      gbPhotoBtn.style.display = '';
+      var remaining = MAX_PHOTOS - selectedPhotoFiles.length;
+      gbPhotoHint.textContent = selectedPhotoFiles.length === 0
+        ? (lang === 'es' ? 'Hasta 5 fotos' : 'Up to 5 photos')
+        : (lang === 'es' ? remaining + ' más' : remaining + ' more');
+    }
+  }
+
+  gbPhotoBtn.addEventListener('click', function () { gbPhotoInput.click(); });
+  gbPhotoInput.addEventListener('change', function () {
+    var files = Array.from(gbPhotoInput.files);
+    var lang = window._currentLang || 'en';
+    for (var i = 0; i < files.length; i++) {
+      if (selectedPhotoFiles.length >= MAX_PHOTOS) break;
+      var file = files[i];
+      if (!file.type.startsWith('image/')) continue;
+      if (file.size > 25 * 1024 * 1024) {
+        gbStatus.textContent = lang === 'es' ? 'Una imagen es muy grande (máx 25MB)' : 'An image is too large (max 25MB)';
+        continue;
+      }
+      selectedPhotoFiles.push(file);
+    }
+    gbPhotoInput.value = '';
+    renderPhotoThumbs();
+  });
+
+  function compressImage(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          var canvas = document.createElement('canvas');
+          var maxW = 2000;
+          var w = img.width;
+          var h = img.height;
+          if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.8));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
 
   function getMyMessages() {
     try { return JSON.parse(localStorage.getItem('gb_mine') || '{}'); }
@@ -1182,6 +1799,142 @@
     return m + ':' + (s < 10 ? '0' : '') + s;
   }
 
+  /* ======== BOUQUET GENERATOR ======== */
+  var FLOWER_PALETTES = [
+    { p:'#f5e6d3', p2:'#eed5bb', c:'#d4a373', s:'#7a8a5a', l:'#8a9a6a' },
+    { p:'#f7c8d0', p2:'#f0a8b5', c:'#c96878', s:'#7a8a5a', l:'#8a9a6a' },
+    { p:'#fce080', p2:'#f5c830', c:'#8b6914', s:'#6a7a4a', l:'#7a8a5a' },
+    { p:'#d5c6e0', p2:'#c0add0', c:'#8b6fb8', s:'#7a8a5a', l:'#8a9a6a' },
+    { p:'#f8c8a0', p2:'#f0a870', c:'#c47a22', s:'#7a8a5a', l:'#8a9a6a' },
+    { p:'#f0b0b0', p2:'#e08888', c:'#a85555', s:'#6a7a4a', l:'#7a8a5a' },
+    { p:'#ffffff', p2:'#f0e8e0', c:'#e8b090', s:'#7a8a5a', l:'#8a9a6a' },
+    { p:'#fce4ec', p2:'#f8bbd0', c:'#e57373', s:'#7a8a5a', l:'#8a9a6a' },
+    { p:'#c8e6c9', p2:'#a5d6a7', c:'#66bb6a', s:'#5a7a4a', l:'#7a9a5a' },
+    { p:'#b3e5fc', p2:'#81d4fa', c:'#4ba3c7', s:'#6a8a5a', l:'#7a9a6a' }
+  ];
+
+  function fStem(p, two) {
+    var h = '<path d="M30 36 C28 50 32 68 30 85" stroke="'+p.s+'" fill="none" stroke-width="1.8" stroke-linecap="round"/>';
+    h += '<path d="M30 55 C24 48 17 50 20 54 C22 56 26 56 30 55" fill="'+p.l+'"/>';
+    if (two) h += '<path d="M30 68 C36 62 43 64 40 67 C38 69 34 69 30 68" fill="'+p.l+'"/>';
+    return h;
+  }
+  function fBlossom(p) {
+    var h = '';
+    for (var i = 0; i < 5; i++)
+      h += '<ellipse cx="30" cy="12" rx="8" ry="12" fill="'+p.p+'" transform="rotate('+(i*72)+' 30 24)"/>';
+    h += '<circle cx="30" cy="24" r="5" fill="'+p.c+'"/>';
+    return h;
+  }
+  function fRose(p) {
+    var h = '<circle cx="30" cy="24" r="16" fill="'+p.p+'" opacity="0.4"/>';
+    for (var i = 0; i < 6; i++)
+      h += '<ellipse cx="30" cy="13" rx="5" ry="12" fill="'+p.p+'" opacity="0.6" transform="rotate('+(i*60+15)+' 30 24)"/>';
+    for (var i = 0; i < 4; i++)
+      h += '<ellipse cx="30" cy="18" rx="4" ry="7" fill="'+p.p2+'" opacity="0.75" transform="rotate('+(i*90+25)+' 30 24)"/>';
+    h += '<ellipse cx="30" cy="24" rx="4" ry="3" fill="'+p.c+'" transform="rotate(30 30 24)"/>';
+    return h;
+  }
+  function fSunflower(p) {
+    var h = '';
+    for (var i = 0; i < 16; i++)
+      h += '<ellipse cx="30" cy="8" rx="2.8" ry="11" fill="'+p.p+'" transform="rotate('+(i*22.5)+' 30 24)"/>';
+    h += '<circle cx="30" cy="24" r="9" fill="'+p.c+'"/>';
+    h += '<circle cx="28" cy="22" r="1.2" fill="'+p.p+'" opacity="0.3"/>';
+    h += '<circle cx="32" cy="23" r="1.2" fill="'+p.p+'" opacity="0.3"/>';
+    h += '<circle cx="30" cy="26" r="1.2" fill="'+p.p+'" opacity="0.3"/>';
+    return h;
+  }
+  function fLily(p) {
+    var h = '';
+    for (var i = 0; i < 3; i++)
+      h += '<ellipse cx="30" cy="9" rx="8" ry="16" fill="'+p.p+'" opacity="0.8" transform="rotate('+(i*120)+' 30 24)"/>';
+    for (var i = 0; i < 3; i++)
+      h += '<ellipse cx="30" cy="15" rx="3.5" ry="9" fill="'+p.p2+'" opacity="0.5" transform="rotate('+(i*120+60)+' 30 24)"/>';
+    h += '<circle cx="30" cy="24" r="3" fill="'+p.c+'"/>';
+    return h;
+  }
+  function fTulip(p) {
+    return '<path d="M30 8 Q16 20 21 38 Q26 33 30 38 Z" fill="'+p.p+'"/>'
+      + '<path d="M30 8 Q44 20 39 38 Q34 33 30 38 Z" fill="'+p.p2+'"/>'
+      + '<path d="M24 15 Q30 6 36 15 Q34 30 30 38 Q26 30 24 15 Z" fill="'+p.p+'" opacity="0.55"/>';
+  }
+  function fDaisy(p) {
+    var h = '';
+    for (var i = 0; i < 11; i++)
+      h += '<ellipse cx="30" cy="12" rx="3" ry="11" fill="'+p.p+'" transform="rotate('+(i*32.7)+' 30 24)"/>';
+    h += '<circle cx="30" cy="24" r="5.5" fill="'+p.c+'"/>';
+    return h;
+  }
+  function fWildflower(p) {
+    var h = '';
+    h += '<path d="M30 36 C26 30 20 24 16 18" stroke="'+p.s+'" fill="none" stroke-width="1.2" stroke-linecap="round"/>';
+    h += '<path d="M30 36 C34 28 38 22 40 16" stroke="'+p.s+'" fill="none" stroke-width="1.2" stroke-linecap="round"/>';
+    h += '<path d="M30 36 C29 28 28 22 27 14" stroke="'+p.s+'" fill="none" stroke-width="1.2" stroke-linecap="round"/>';
+    var buds = [{x:16,y:18,r:5},{x:40,y:16,r:4.5},{x:27,y:14,r:5},{x:34,y:26,r:3.5}];
+    for (var i = 0; i < buds.length; i++) {
+      var b = buds[i];
+      h += '<circle cx="'+b.x+'" cy="'+b.y+'" r="'+b.r+'" fill="'+p.p+'"/>';
+      h += '<circle cx="'+b.x+'" cy="'+b.y+'" r="'+(b.r*0.4)+'" fill="'+p.c+'"/>';
+    }
+    return h;
+  }
+  function fPoppy(p) {
+    var h = '';
+    h += '<ellipse cx="20" cy="18" rx="11" ry="10" fill="'+p.p+'" opacity="0.8"/>';
+    h += '<ellipse cx="40" cy="18" rx="11" ry="10" fill="'+p.p+'" opacity="0.75"/>';
+    h += '<ellipse cx="21" cy="31" rx="11" ry="9" fill="'+p.p2+'" opacity="0.7"/>';
+    h += '<ellipse cx="39" cy="31" rx="11" ry="9" fill="'+p.p2+'" opacity="0.7"/>';
+    h += '<circle cx="30" cy="24" r="7" fill="'+p.c+'"/>';
+    h += '<circle cx="30" cy="24" r="3.5" fill="'+p.s+'" opacity="0.4"/>';
+    return h;
+  }
+
+  var FLOWER_FNS = [fBlossom, fRose, fSunflower, fLily, fTulip, fDaisy, fWildflower, fPoppy];
+
+  function flowerHash(str) {
+    var h = 0;
+    for (var i = 0; i < str.length; i++)
+      h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  }
+
+  var BOUQUET_POS = {
+    2: [
+      { left: 2, w: 40, z: 1 },
+      { left: 30, w: 44, z: 2 }
+    ],
+    3: [
+      { left: 0, w: 34, z: 1 },
+      { left: 20, w: 38, z: 3 },
+      { left: 40, w: 34, z: 2 }
+    ]
+  };
+
+  function generateBouquet(id) {
+    var h = flowerHash(id || 'x');
+    var count = 2 + (h % 2);
+    var positions = BOUQUET_POS[count];
+    var html = '<div class="guestbook-bouquet">';
+    for (var i = 0; i < count; i++) {
+      var seed = Math.abs(h * 31 + i * 7919);
+      var type = seed % FLOWER_FNS.length;
+      var palIdx = Math.floor(seed / 8) % FLOWER_PALETTES.length;
+      var pal = FLOWER_PALETTES[palIdx];
+      var tilt = (Math.floor(seed / 128) % 17) - 8;
+      var twoLeaves = i === 0;
+      var pos = positions[i];
+      html += '<div class="bouquet-stem" style="left:'+pos.left+'px;width:'+pos.w+'px;z-index:'+pos.z+'">';
+      html += '<svg viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg">';
+      html += '<g transform="rotate('+tilt+' 30 45)">';
+      if (type !== 6) html += fStem(pal, twoLeaves);
+      html += FLOWER_FNS[type](pal);
+      html += '</g></svg></div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
   function renderMessages(messages) {
     if (!messages || messages.length === 0) {
       var lang = window._currentLang || 'en';
@@ -1198,6 +1951,8 @@
       var canEdit = mine[entry.id] && (Date.now() - entry.timestamp < EDIT_WINDOW);
 
       html += '<div class="guestbook-entry" data-id="' + (entry.id || '') + '">';
+      html += generateBouquet(entry.id);
+      html += '<div class="guestbook-entry-body">';
 
       if (canEdit) {
         var remaining = EDIT_WINDOW - (Date.now() - entry.timestamp);
@@ -1212,9 +1967,21 @@
       }
 
       html += '<p class="guestbook-entry-message">' + escapeHtml(entry.message) + '</p>';
+      var urls = entry.photoUrls || (entry.photoUrl ? [entry.photoUrl] : []);
+      if (urls.length > 0) {
+        var countClass = urls.length === 1 ? 'count-1' : urls.length === 2 ? 'count-2' : 'count-many';
+        html += '<div class="gb-entry-photos ' + countClass + '" data-photos="' + escapeHtml(JSON.stringify(urls)) + '">';
+        urls.forEach(function (url, pi) {
+          var photoRot = ((flowerHash(entry.id) + pi * 3) % 5) - 2;
+          html += '<div class="gb-entry-photo" style="--rot:'+photoRot+'deg" data-photo-index="'+pi+'">';
+          html += '<img src="'+escapeHtml(url)+'" alt="" loading="lazy">';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
       if (entry.edited) html += '<span class="guestbook-edited">' + (lang === 'es' ? 'editado' : 'edited') + '</span>';
       html += '<p class="guestbook-entry-date">' + formatDate(entry.timestamp) + '</p>';
-      html += '</div>';
+      html += '</div></div>';
     });
     gbContainer.innerHTML = html;
 
@@ -1235,6 +2002,30 @@
         gbName.disabled = true;
         gbSubmit.textContent = lang === 'es' ? 'Guardar' : 'Save';
       });
+    });
+
+    gbContainer.querySelectorAll('.gb-entry-photos').forEach(function (wrap) {
+      var photos = JSON.parse(wrap.getAttribute('data-photos'));
+      wrap.querySelectorAll('.gb-entry-photo').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var idx = parseInt(el.getAttribute('data-photo-index')) || 0;
+          openLightbox(photos, idx);
+        });
+      });
+    });
+
+    var t = translations[lang];
+    gbContainer.querySelectorAll('.guestbook-entry-message').forEach(function (el) {
+      if (el.scrollHeight > el.clientHeight + 2) {
+        var btn = document.createElement('button');
+        btn.className = 'guestbook-show-more';
+        btn.textContent = t.showMore;
+        btn.addEventListener('click', function () {
+          var expanded = el.classList.toggle('expanded');
+          btn.textContent = expanded ? t.showLess : t.showMore;
+        });
+        el.insertAdjacentElement('afterend', btn);
+      }
     });
 
     startTimers();
@@ -1313,18 +2104,46 @@
       return;
     }
 
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, message: message })
-    })
-    .then(function (r) {
-      return r.json().then(function (data) {
-        if (!r.ok) {
-          if (data.error === 'inappropriate') throw new Error('blocked');
-          throw new Error();
-        }
-        return data;
+    var uploadPromise;
+    if (selectedPhotoFiles.length > 0) {
+      gbStatus.textContent = t.gbUploading || 'Uploading photos...';
+      var filesToUpload = selectedPhotoFiles.slice();
+      var total = filesToUpload.length;
+      uploadPromise = filesToUpload.reduce(function (chain, file, fi) {
+        return chain.then(function (results) {
+          gbStatus.textContent = (t.gbUploading || 'Uploading photos...') + ' (' + (fi + 1) + '/' + total + ')';
+          return compressImage(file).then(function (dataUrl) {
+            return fetch('/api/photos', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: dataUrl, name: name, caption: '' })
+            }).then(function (r) { return r.json(); })
+              .then(function (d) { results.push(d.photo ? d.photo.url : null); return results; });
+          });
+        });
+      }, Promise.resolve([]));
+    } else {
+      uploadPromise = Promise.resolve([]);
+    }
+
+    uploadPromise.then(function (photoUrls) {
+      photoUrls = photoUrls.filter(Boolean);
+      gbStatus.textContent = t.gbSending;
+      var body = { name: name, message: message };
+      if (photoUrls.length > 0) body.photoUrls = photoUrls;
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      .then(function (r) {
+        return r.json().then(function (data) {
+          if (!r.ok) {
+            if (data.error === 'inappropriate') throw new Error('blocked');
+            throw new Error();
+          }
+          return data;
+        });
       });
     })
     .then(function (data) {
@@ -1334,7 +2153,11 @@
       }
       gbName.value = '';
       gbMessage.value = '';
+      selectedPhotoFiles = [];
+      gbPhotoInput.value = '';
+      renderPhotoThumbs();
       loadMessages();
+      loadGallery();
       setTimeout(function () { gbStatus.textContent = ''; }, 3000);
     })
     .catch(function (err) {
@@ -1345,6 +2168,181 @@
     });
   });
 
+  /* ======== LIGHTBOX ======== */
+  var lightbox = document.getElementById('photo-lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+  var lightboxClose = document.getElementById('lightbox-close');
+  var lightboxPrev = document.getElementById('lightbox-prev');
+  var lightboxNext = document.getElementById('lightbox-next');
+  var lightboxCounter = document.getElementById('lightbox-counter');
+  var lightboxUrls = [];
+  var lightboxIdx = 0;
+
+  function closeLightbox() { lightbox.classList.remove('open'); lightboxUrls = []; }
+  function showLightboxPhoto(idx) {
+    lightboxIdx = idx;
+    lightboxImg.src = lightboxUrls[idx];
+    var multi = lightboxUrls.length > 1;
+    lightboxPrev.classList.toggle('visible', multi);
+    lightboxNext.classList.toggle('visible', multi);
+    lightboxCounter.classList.toggle('visible', multi);
+    if (multi) lightboxCounter.textContent = (idx + 1) + ' / ' + lightboxUrls.length;
+  }
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', function (e) { if (e.target === lightbox) closeLightbox(); });
+  lightboxPrev.addEventListener('click', function (e) {
+    e.stopPropagation();
+    showLightboxPhoto((lightboxIdx - 1 + lightboxUrls.length) % lightboxUrls.length);
+  });
+  lightboxNext.addEventListener('click', function (e) {
+    e.stopPropagation();
+    showLightboxPhoto((lightboxIdx + 1) % lightboxUrls.length);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft' && lightboxUrls.length > 1) showLightboxPhoto((lightboxIdx - 1 + lightboxUrls.length) % lightboxUrls.length);
+    if (e.key === 'ArrowRight' && lightboxUrls.length > 1) showLightboxPhoto((lightboxIdx + 1) % lightboxUrls.length);
+  });
+  function openLightbox(urls, startIdx) {
+    if (typeof urls === 'string') urls = [urls];
+    lightboxUrls = urls;
+    showLightboxPhoto(startIdx || 0);
+    lightbox.classList.add('open');
+    lightboxClose.focus();
+  }
+
+  /* ======== PHOTO GALLERY ======== */
+  var gallerySection = document.getElementById('memorial-gallery');
+  var mgPreview = document.getElementById('mg-preview');
+  var mgCaption = document.getElementById('mg-caption');
+  var mgDots = document.getElementById('mg-dots');
+  var mgWall = document.getElementById('mg-wall');
+  var galleryPhotos = [];
+  var galleryCurrent = 0;
+  var galleryCycleTimer = null;
+
+  function renderGalleryPreview(idx) {
+    galleryCurrent = idx;
+    var photo = galleryPhotos[idx];
+    var newImg = document.createElement('img');
+    newImg.src = photo.url;
+    newImg.alt = photo.caption || photo.name;
+    mgPreview.appendChild(newImg);
+    var imgs = mgPreview.querySelectorAll('img');
+    for (var i = 0; i < imgs.length - 1; i++) {
+      imgs[i].classList.add('mg-fading');
+      (function (el) { setTimeout(function () { if (el.parentNode) el.remove(); }, 900); })(imgs[i]);
+    }
+    while (mgPreview.children.length > 2) mgPreview.removeChild(mgPreview.firstChild);
+    mgCaption.textContent = (photo.caption ? photo.caption + ' — ' : '') + photo.name;
+    mgDots.querySelectorAll('.mg-dot').forEach(function (d, i) { d.classList.toggle('active', i === idx); });
+    var pName = photo.name;
+    mgWall.querySelectorAll('.mg-card').forEach(function (c) {
+      var label = c.querySelector('.mg-card-name');
+      c.classList.toggle('active', label && label.textContent === pName);
+    });
+  }
+
+  function startGalleryCycle() {
+    clearInterval(galleryCycleTimer);
+    if (galleryPhotos.length <= 1) return;
+    galleryCycleTimer = setInterval(function () {
+      renderGalleryPreview((galleryCurrent + 1) % galleryPhotos.length);
+    }, 4500);
+  }
+
+  function loadGallery() {
+    fetch('/api/photos')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        galleryPhotos = data.photos || [];
+        if (galleryPhotos.length === 0) return;
+        gallerySection.classList.add('has-photos');
+
+        var grouped = [];
+        var nameMap = {};
+        galleryPhotos.forEach(function (photo) {
+          var p = typeof photo === 'string' ? JSON.parse(photo) : photo;
+          if (!nameMap[p.name]) {
+            nameMap[p.name] = { name: p.name, photos: [] };
+            grouped.push(nameMap[p.name]);
+          }
+          nameMap[p.name].photos.push(p);
+        });
+
+        var rotations = [-3, 2, -1.5, 2.5, -2, 1, -2.5, 3, -1, 1.5];
+        mgWall.innerHTML = '';
+        mgDots.innerHTML = '';
+        mgPreview.innerHTML = '';
+        galleryPhotos.forEach(function (photo, i) {
+          var dot = document.createElement('button');
+          dot.className = 'mg-dot' + (i === 0 ? ' active' : '');
+          dot.addEventListener('click', function () {
+            renderGalleryPreview(i);
+            clearInterval(galleryCycleTimer);
+            startGalleryCycle();
+          });
+          mgDots.appendChild(dot);
+        });
+
+        grouped.forEach(function (group, gi) {
+          var firstPhoto = group.photos[0];
+          var firstIdx = galleryPhotos.indexOf(firstPhoto);
+          var card = document.createElement('div');
+          card.className = 'mg-card' + (group.photos.length > 1 ? ' stacked' : '');
+          card.style.setProperty('--rot', rotations[gi % rotations.length] + 'deg');
+          var img = document.createElement('img');
+          img.src = firstPhoto.url;
+          img.alt = firstPhoto.name;
+          img.loading = 'lazy';
+          card.appendChild(img);
+          if (group.photos.length > 1) {
+            var badge = document.createElement('span');
+            badge.className = 'mg-card-stack';
+            badge.textContent = group.photos.length;
+            card.appendChild(badge);
+          }
+          var nameLabel = document.createElement('div');
+          nameLabel.className = 'mg-card-name';
+          nameLabel.textContent = group.name;
+          card.appendChild(nameLabel);
+          mgWall.appendChild(card);
+
+          card.addEventListener('click', function () {
+            renderGalleryPreview(firstIdx);
+            clearInterval(galleryCycleTimer);
+            startGalleryCycle();
+          });
+        });
+
+        renderGalleryPreview(0);
+        startGalleryCycle();
+      })
+      .catch(function () {});
+  }
+
+  /* ======== FLOWER SHOWCASE ======== */
+  (function () {
+    var showcase = document.getElementById('flower-showcase');
+    if (!showcase) return;
+    var names = ['Blossom', 'Rose', 'Sunflower', 'Lily', 'Tulip', 'Daisy', 'Wildflower', 'Poppy'];
+    var palettes = [0, 1, 2, 3, 4, 5, 6, 7];
+    for (var i = 0; i < FLOWER_FNS.length; i++) {
+      var pal = FLOWER_PALETTES[palettes[i]];
+      var svg = '<svg viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg">';
+      svg += '<g transform="translate(0,2)">';
+      if (i !== 6) svg += fStem(pal, true);
+      svg += FLOWER_FNS[i](pal);
+      svg += '</g></svg>';
+      var item = document.createElement('div');
+      item.className = 'flower-showcase-item';
+      item.innerHTML = svg + '<span class="flower-showcase-label">' + names[i] + '</span>';
+      showcase.appendChild(item);
+    }
+  })();
+
   loadMessages();
+  loadGallery();
 })();
 </script>

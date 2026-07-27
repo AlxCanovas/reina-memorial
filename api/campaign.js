@@ -1,11 +1,14 @@
 import { kv } from '@vercel/kv';
 
 const GFM_URL = 'https://www.gofundme.com/f/honoring-my-mom-and-chichis-memory';
-const CACHE_KEY = 'memorial:campaign';
+const CACHE_KEY = 'memorial:campaign:v2';
 const CACHE_TTL = 300; // 5 minutes
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin || '';
+  const allowed = (origin === 'https://forreina.com' || origin.endsWith('.vercel.app')) ? origin : 'https://forreina.com';
+  res.setHeader('Access-Control-Allow-Origin', allowed);
+  res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
 
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -32,39 +35,40 @@ export default async function handler(req, res) {
 
     let raised = 0;
     let goal = 11000;
+    let donorCount = 0;
 
-    // Try __NEXT_DATA__ JSON
     const nextDataMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
     if (nextDataMatch) {
       try {
         const nextData = JSON.parse(nextDataMatch[1]);
-        const campaign = nextData?.props?.pageProps?.campaign;
-        if (campaign) {
-          raised = campaign.current_amount || campaign.money_raised?.amount || 0;
-          goal = campaign.goal_amount || campaign.goal?.amount || goal;
+        const apollo = nextData?.props?.pageProps?.['__APOLLO_STATE__'] || {};
+        for (const key of Object.keys(apollo)) {
+          if (key.startsWith('Fundraiser:')) {
+            const f = apollo[key];
+            if (f.currentAmount?.amount) raised = f.currentAmount.amount;
+            if (f.goalAmount?.amount) goal = f.goalAmount.amount;
+            if (f.donationCount) donorCount = f.donationCount;
+            break;
+          }
         }
       } catch (e) {}
     }
 
-    // Fallback: look for amounts in meta tags or common patterns
-    if (raised === 0) {
-      const raisedMatch = html.match(/\"current_amount\"\s*:\s*([\d.]+)/);
-      if (raisedMatch) raised = parseFloat(raisedMatch[1]);
-
-      const goalMatch = html.match(/\"goal_amount\"\s*:\s*([\d.]+)/);
-      if (goalMatch) goal = parseFloat(goalMatch[1]);
-    }
-
-    // Another fallback: og:description often has "X raised of Y goal"
     if (raised === 0) {
       const ogMatch = html.match(/\$([\d,]+)\s*raised/i);
       if (ogMatch) raised = parseFloat(ogMatch[1].replace(/,/g, ''));
+    }
+
+    if (donorCount === 0) {
+      const donorMatch = html.match(/([\d,]+)\s*donation/i);
+      if (donorMatch) donorCount = parseInt(donorMatch[1].replace(/,/g, ''), 10) || 0;
     }
 
     const data = {
       raised: raised,
       goal: goal,
       percent: goal > 0 ? Math.min(100, Math.round((raised / goal) * 100)) : 0,
+      donorCount: donorCount,
       updatedAt: Date.now(),
     };
 
