@@ -22,12 +22,14 @@
     --gold-light: #D4922E;
     --gold-stroke: rgba(180,110,30,0.35);
     --gold-stroke-light: rgba(180,110,30,0.12);
-    --ivory: #FAF5EB;
-    --ivory-warm: #F5EEE0;
+    --ivory: #FFFFFF;
+    --ivory-warm: #F9F7F4;
     --text: #2a1a1a;
     --text-mid: rgba(42,26,26,0.6);
     --text-light: rgba(42,26,26,0.4);
     --border: rgba(42,26,26,0.07);
+    --petal: #F2C94C;
+    --petal-light: #F5D76E;
     --night: #0f0e1a;
     --night-mid: #1a1930;
     --candle-glow: #F5A623;
@@ -48,26 +50,26 @@
 
   /* ---------- ATMOSPHERE TIME-OF-DAY ---------- */
   body.atmosphere-dawn {
-    --ivory: #FDF6EC;
-    --ivory-warm: #F8ECDA;
+    --ivory: #FFF8EE;
+    --ivory-warm: #FFF0DD;
     --text: #2a1a1a;
     --text-mid: rgba(42,26,26,0.6);
   }
   body.atmosphere-day {
-    --ivory: #FAF5EB;
-    --ivory-warm: #F5EEE0;
+    --ivory: #FFFFFF;
+    --ivory-warm: #F9F7F4;
     --text: #2a1a1a;
     --text-mid: rgba(42,26,26,0.6);
   }
   body.atmosphere-golden {
-    --ivory: #F5E6CA;
-    --ivory-warm: #EDDBB5;
+    --ivory: #FFF5E0;
+    --ivory-warm: #FFECC4;
     --text: #2a1a1a;
     --text-mid: rgba(42,26,26,0.6);
   }
   body.atmosphere-dusk {
-    --ivory: #D4C4AE;
-    --ivory-warm: #C8B89E;
+    --ivory: #E8DDD0;
+    --ivory-warm: #DDD0C0;
     --text: #1a1210;
     --text-mid: rgba(26,18,16,0.65);
   }
@@ -432,62 +434,73 @@
 
   /* ---------- STAR MAP ---------- */
   .starmap-section {
-    padding: 6rem 1.5rem;
+    padding: 0;
     background: var(--night);
     position: relative;
     overflow: hidden;
-    min-height: 80vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
-  .starmap-canvas {
+  .starmap-section .starmap-canvas {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: 0;
   }
-  .starmap-section > *:not(canvas) { position: relative; z-index: 1; }
+  .starmap-section > *:not(.starmap-canvas) { position: relative; z-index: 1; }
   .starmap-section .section-heading {
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.85);
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    margin-bottom: 0.5rem;
   }
   .starmap-subtitle {
     font-family: var(--serif);
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     color: rgba(255,255,255,0.35);
     font-style: italic;
     letter-spacing: 0.06em;
-    margin-top: 0.5rem;
+    margin-top: 3rem;
+    max-width: 400px;
+    line-height: 1.7;
   }
   .starmap-date {
     font-family: var(--serif);
     font-size: 0.9rem;
-    color: rgba(245,166,35,0.6);
-    letter-spacing: 0.12em;
-    margin-bottom: 2rem;
+    color: rgba(245,166,35,0.5);
+    letter-spacing: 0.15em;
+    margin-bottom: 3rem;
   }
   .starmap-facts {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 12px;
-    max-width: 480px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 520px;
     width: 100%;
-    margin: 0 auto 3rem;
+    margin: 0 auto 2rem;
+    padding: 0 1.5rem;
   }
   .starmap-fact {
-    padding: 0.8rem 0.6rem;
+    padding: 1rem 0.8rem;
     border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 8px;
+    border-radius: 10px;
     background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
   .starmap-fact-value {
     font-family: var(--serif);
-    font-size: 1.1rem;
-    color: rgba(245,196,100,0.8);
-    margin-bottom: 2px;
+    font-size: 1.15rem;
+    color: rgba(245,196,100,0.85);
+    margin-bottom: 4px;
   }
   .starmap-fact-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.3);
   }
   .starmap-constellation-label {
     position: absolute;
@@ -498,6 +511,43 @@
     color: rgba(255,255,255,0.18);
     pointer-events: none;
   }
+
+  /* ===== SUNFLOWER PETALS ===== */
+  .petal-layer {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    overflow: hidden;
+  }
+  .sf-petal {
+    position: absolute;
+    border-radius: 80% 0 55% 50% / 55% 0 80% 50%;
+    opacity: 0;
+    animation: petalDrift ease-in-out infinite, petalSway ease-in-out infinite;
+    filter: drop-shadow(0 1px 3px rgba(180,120,20,0.18));
+  }
+  @keyframes petalDrift {
+    0% {
+      opacity: 0;
+      transform: translate(0, -30px) rotate(0deg);
+    }
+    6% { opacity: 0.85; }
+    50% { opacity: 0.7; }
+    88% { opacity: 0.45; }
+    100% {
+      opacity: 0;
+      transform: translate(var(--drift-x, -80px), calc(100vh + 60px)) rotate(var(--spin, 360deg));
+    }
+  }
+  @keyframes petalSway {
+    0%, 100% { margin-left: 0; }
+    25% { margin-left: var(--sway, 15px); }
+    75% { margin-left: calc(var(--sway, 15px) * -1); }
+  }
+  body.atmosphere-night .petal-layer { opacity: 0.15; }
+  body.atmosphere-dusk .petal-layer { opacity: 0.4; }
 
   /* ---------- ANNUAL LAYERS ---------- */
   .annual-section {
@@ -1018,7 +1068,7 @@
   /* ---------- GUESTBOOK ---------- */
   .guestbook {
     padding: 5rem 1.5rem;
-    background: linear-gradient(180deg, var(--ivory-warm) 0%, #ece3d4 100%);
+    background: linear-gradient(180deg, var(--ivory-warm) 0%, #F0EDE8 100%);
   }
   .guestbook-form {
     max-width: 500px;
@@ -1203,7 +1253,7 @@
   /* ---------- PHOTO GALLERY ---------- */
   .memorial-gallery {
     padding: 3.5rem 1.5rem 3rem;
-    background: linear-gradient(180deg, #ddd3c3 0%, #E2D8C8 40%, var(--ivory-warm) 100%);
+    background: linear-gradient(180deg, #E8E4DE 0%, #F0EDE8 40%, var(--ivory-warm) 100%);
     display: none;
   }
   .memorial-gallery.has-photos { display: flex; }
@@ -1591,7 +1641,7 @@
     position: fixed;
     bottom: 0; left: 0; right: 0;
     z-index: 1000;
-    background: rgba(255,252,245,0.88);
+    background: rgba(255,255,255,0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid var(--border);
@@ -1688,6 +1738,9 @@
     .guestbook-bouquet { width: 60px; min-height: 48px; }
     .guestbook-entry { gap: 0.75rem; padding: 1rem; }
     .candle-wall { grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; }
+    .starmap-section { min-height: 90vh; }
+    .starmap-facts { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .starmap-section .section-heading { font-size: 1.5rem; }
   }
 </style>
 
@@ -1695,6 +1748,8 @@
   <div class="atmosphere-badge" id="atmosphere-badge"></div>
   <button class="atmo-cycle-btn" id="atmo-cycle" title="Cycle time of day">&#x25B6;</button>
 </div>
+
+<div class="petal-layer" id="petal-layer"></div>
 
 <main>
 
@@ -1872,6 +1927,7 @@
 
   <!-- STAR MAP -->
   <section class="starmap-section">
+    <canvas class="starmap-canvas" id="starmap-canvas"></canvas>
     <span class="label-tag" style="border-color: rgba(245,166,35,0.25); color: rgba(245,166,35,0.7);">New</span>
     <h2 class="section-heading">The Night She Was Born</h2>
     <p class="starmap-date">Santiago de Cuba &mdash; March 15, 1961</p>
@@ -1901,7 +1957,6 @@
         <div class="starmap-fact-label">Zodiac sign</div>
       </div>
     </div>
-    <canvas class="starmap-canvas" id="starmap-canvas"></canvas>
     <p class="starmap-subtitle">The darkest moon of the month. The stars were as bright as they'd ever be.</p>
   </section>
 
@@ -2041,6 +2096,35 @@
       currentIdx = (currentIdx + 1) % phases.length;
       applyPhase(currentIdx);
     });
+  }
+})();
+
+// ===== SUNFLOWER PETALS =====
+(function() {
+  var layer = document.getElementById('petal-layer');
+  if (!layer) return;
+  var colors = ['#F2C94C', '#F5D76E', '#E8B828', '#D4A017', '#F0C040', '#EDBE3E'];
+  var petalCount = 25;
+
+  for (var i = 0; i < petalCount; i++) {
+    var p = document.createElement('div');
+    p.className = 'sf-petal';
+    var size = 14 + Math.random() * 18;
+    var drift = -100 + Math.random() * 200;
+    var spin = 180 + Math.random() * 540;
+    var sway = 10 + Math.random() * 25;
+    p.style.width = size + 'px';
+    p.style.height = (size * 1.5) + 'px';
+    p.style.left = (3 + Math.random() * 94) + '%';
+    p.style.top = '-40px';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.setProperty('--drift-x', drift + 'px');
+    p.style.setProperty('--spin', spin + 'deg');
+    p.style.setProperty('--sway', sway + 'px');
+    var dur = 9 + Math.random() * 11;
+    p.style.animationDuration = dur + 's, ' + (2 + Math.random() * 3) + 's';
+    p.style.animationDelay = (Math.random() * 6) + 's';
+    layer.appendChild(p);
   }
 })();
 
