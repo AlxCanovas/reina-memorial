@@ -526,21 +526,43 @@
     position: absolute;
     border-radius: 80% 0 55% 50% / 55% 0 80% 50%;
     opacity: 0;
-    animation: petalWind ease-in-out infinite;
+    animation: petalWind linear infinite;
   }
   @keyframes petalWind {
-    0%  { opacity: 0; transform: translateX(0) translateY(0) rotate(0deg); }
-    4%  { opacity: var(--peak, 0.28); }
-    15% { transform: translateX(calc(var(--travel) * 0.15)) translateY(var(--bob1, -10px)) rotate(calc(var(--spin) * 0.15)); }
-    30% { transform: translateX(calc(var(--travel) * 0.3)) translateY(var(--bob2, 14px)) rotate(calc(var(--spin) * 0.3)); }
-    50% { transform: translateX(calc(var(--travel) * 0.5)) translateY(var(--bob3, -6px)) rotate(calc(var(--spin) * 0.5)); }
-    70% { transform: translateX(calc(var(--travel) * 0.7)) translateY(var(--bob1, -10px)) rotate(calc(var(--spin) * 0.7)); }
-    85% { transform: translateX(calc(var(--travel) * 0.85)) translateY(var(--bob2, 14px)) rotate(calc(var(--spin) * 0.85)); }
-    96% { opacity: var(--peak, 0.28); }
+    0%   { opacity: 0; transform: translateX(0) translateY(0) rotate(0deg); }
+    3%   { opacity: var(--peak, 0.28); transform: translateX(calc(var(--travel) * 0.03)) translateY(var(--bob3, -4px)) rotate(calc(var(--spin) * 0.03)); }
+    18%  { opacity: var(--peak, 0.28); transform: translateX(calc(var(--travel) * 0.18)) translateY(var(--bob1, -10px)) rotate(calc(var(--spin) * 0.18)); }
+    35%  { transform: translateX(calc(var(--travel) * 0.35)) translateY(var(--bob2, 14px)) rotate(calc(var(--spin) * 0.35)); }
+    52%  { transform: translateX(calc(var(--travel) * 0.52)) translateY(var(--bob3, -6px)) rotate(calc(var(--spin) * 0.52)); }
+    68%  { transform: translateX(calc(var(--travel) * 0.68)) translateY(var(--bob1, -10px)) rotate(calc(var(--spin) * 0.68)); }
+    85%  { transform: translateX(calc(var(--travel) * 0.85)) translateY(var(--bob2, 14px)) rotate(calc(var(--spin) * 0.85)); }
+    97%  { opacity: var(--peak, 0.28); transform: translateX(calc(var(--travel) * 0.97)) translateY(var(--bob3, -4px)) rotate(calc(var(--spin) * 0.97)); }
     100% { opacity: 0; transform: translateX(var(--travel)) translateY(0) rotate(var(--spin)); }
   }
   body.atmosphere-night .petal-layer { opacity: 0.15; }
   body.atmosphere-dusk .petal-layer { opacity: 0.4; }
+
+  /* ===== NIGHT SKY STARS ===== */
+  .stars-layer {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 2s ease;
+  }
+  body.atmosphere-night .stars-layer { opacity: 1; }
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--star-bright, 0.7); }
+    50% { opacity: var(--star-dim, 0.15); }
+  }
 
   /* ---------- ANNUAL LAYERS ---------- */
   .annual-section {
@@ -681,6 +703,12 @@
     width: 100%; height: 100%;
     pointer-events: none;
     z-index: 0;
+    animation: sunflowerSway 7s ease-in-out infinite;
+  }
+  @keyframes sunflowerSway {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    30% { transform: translate(5px, -2px) rotate(0.6deg); }
+    70% { transform: translate(-4px, 1px) rotate(-0.5deg); }
   }
   section > *:not(.sf-canvas) { position: relative; z-index: 1; }
 
@@ -2128,9 +2156,30 @@
     p.style.setProperty('--bob2', (4 + Math.random() * 18) + 'px');
     p.style.setProperty('--bob3', (-10 + Math.random() * 8) + 'px');
     p.style.setProperty('--peak', (0.2 + Math.random() * 0.15).toFixed(2));
-    p.style.animationDuration = (18 + Math.random() * 22) + 's';
-    p.style.animationDelay = (Math.random() * 14) + 's';
+    p.style.animationDuration = (8 + Math.random() * 8) + 's';
+    p.style.animationDelay = (Math.random() * 8) + 's';
     layer.appendChild(p);
+  }
+})();
+
+// ===== NIGHT SKY STARS =====
+(function() {
+  var sl = document.createElement('div');
+  sl.className = 'stars-layer';
+  document.body.appendChild(sl);
+  for (var i = 0; i < 90; i++) {
+    var s = document.createElement('div');
+    s.className = 'star';
+    var size = 0.8 + Math.random() * 2;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.setProperty('--star-bright', (0.4 + Math.random() * 0.5).toFixed(2));
+    s.style.setProperty('--star-dim', (0.05 + Math.random() * 0.15).toFixed(2));
+    s.style.animationDuration = (2 + Math.random() * 5) + 's';
+    s.style.animationDelay = (Math.random() * 4) + 's';
+    sl.appendChild(s);
   }
 })();
 
