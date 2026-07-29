@@ -22,10 +22,10 @@
   :root {
     --serif: 'Hoefler Text', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
     --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --gold: #B8920E;
-    --gold-light: #CCA215;
-    --gold-stroke: rgba(170,130,15,0.35);
-    --gold-stroke-light: rgba(170,130,15,0.12);
+    --gold: #C47A22;
+    --gold-light: #D4922E;
+    --gold-stroke: rgba(180,110,30,0.35);
+    --gold-stroke-light: rgba(180,110,30,0.12);
     --ivory: #FFFFFF;
     --ivory-warm: #F9F7F4;
     --text: #2a1a1a;
@@ -85,7 +85,7 @@
     --text-mid: rgba(216,212,232,0.6);
     --text-light: rgba(216,212,232,0.35);
     --border: rgba(216,212,232,0.08);
-    --gold: #CCA215;
+    --gold: #D4922E;
   }
   body.atmosphere-night .impact-card,
   body.atmosphere-night .guestbook-entry {
@@ -109,8 +109,9 @@
     top: 12px;
     right: 12px;
     display: flex;
-    align-items: center;
-    gap: 6px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
     z-index: 100;
   }
   .atmosphere-badge {
@@ -129,6 +130,13 @@
     background: rgba(255,255,255,0.08);
     color: rgba(232,223,208,0.5);
   }
+  .atmosphere-bar-note {
+    font-size: 0.6rem;
+    color: var(--text-light);
+    margin-top: 2px;
+    letter-spacing: 0.03em;
+  }
+  body.atmosphere-night .atmosphere-bar-note { color: rgba(216,212,232,0.35); }
   .atmo-cycle-btn {
     width: 28px;
     height: 28px;
@@ -187,15 +195,15 @@
   }
   .candle-wall {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
-    gap: 12px;
-    max-width: 520px;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 14px;
+    max-width: 560px;
     width: 100%;
     margin: 0 auto 2rem;
   }
   .candle-spot {
-    width: 44px;
-    height: 60px;
+    width: 56px;
+    height: 90px;
     position: relative;
     cursor: pointer;
     display: flex;
@@ -205,35 +213,69 @@
     transition: transform 0.3s;
     justify-self: center;
   }
-  .candle-spot:hover { transform: scale(1.1); }
+  .candle-spot:hover { transform: scale(1.06); }
   .candle-body {
-    width: 8px;
-    height: 28px;
-    background: linear-gradient(180deg, #F5E6D0 0%, #E8D5B8 100%);
-    border-radius: 2px 2px 0 0;
+    width: 12px;
+    height: 40px;
+    background: linear-gradient(180deg, #FFF8EC 0%, #F5E6D0 30%, #EDDCC0 60%, #E0CDAD 100%);
+    border-radius: 3px 3px 1px 1px;
     position: relative;
+    box-shadow: inset -2px 0 3px rgba(0,0,0,0.06), inset 1px 0 2px rgba(255,255,255,0.3);
+  }
+  .candle-body::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: -2px;
+    width: 4px;
+    height: 6px;
+    background: rgba(245,230,208,0.7);
+    border-radius: 0 0 50% 50%;
+  }
+  .candle-body::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    right: -1.5px;
+    width: 3px;
+    height: 5px;
+    background: rgba(245,230,208,0.5);
+    border-radius: 0 0 50% 50%;
   }
   .candle-wick {
     position: absolute;
-    top: -3px;
+    top: -5px;
     left: 50%;
     transform: translateX(-50%);
-    width: 1px;
-    height: 4px;
-    background: #555;
+    width: 1.5px;
+    height: 6px;
+    background: linear-gradient(180deg, #333 0%, #666 100%);
+    border-radius: 0.5px;
   }
   .candle-flame {
     position: absolute;
-    top: -18px;
+    top: -26px;
     left: 50%;
     transform: translateX(-50%);
-    width: 8px;
-    height: 14px;
-    background: radial-gradient(ellipse at 50% 80%, #FFE4A0 0%, #F5A623 40%, #E8630A 70%, transparent 100%);
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    width: 10px;
+    height: 20px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 35% 35%;
     opacity: 0;
     transition: opacity 0.8s;
-    filter: blur(0.5px);
+    background:
+      radial-gradient(ellipse at 50% 85%, rgba(80,120,255,0.35) 0%, transparent 25%),
+      radial-gradient(ellipse at 50% 60%, #FFF5D0 0%, #FFD54F 20%, #FFB300 40%, #FF8F00 60%, #E65100 80%, transparent 100%);
+  }
+  .candle-flame::after {
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: radial-gradient(ellipse, rgba(255,250,220,0.9) 0%, rgba(255,213,79,0.4) 60%, transparent 100%);
+    border-radius: 50%;
   }
   .candle-spot.lit .candle-flame {
     opacity: 1;
@@ -241,58 +283,105 @@
   }
   .candle-glow-ring {
     position: absolute;
-    top: -26px;
+    top: -36px;
     left: 50%;
     transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
-    background: radial-gradient(circle, rgba(245,166,35,0.25) 0%, transparent 70%);
+    width: 44px;
+    height: 44px;
+    background: radial-gradient(circle, rgba(255,179,0,0.18) 0%, rgba(255,143,0,0.06) 40%, transparent 70%);
     opacity: 0;
     transition: opacity 1s;
     pointer-events: none;
   }
   .candle-spot.lit .candle-glow-ring { opacity: 1; }
   .candle-spot.ember .candle-flame {
-    opacity: 0.3;
-    width: 4px;
-    height: 6px;
-    top: -10px;
-    filter: blur(1px);
+    opacity: 0.25;
+    width: 5px;
+    height: 8px;
+    top: -16px;
+    filter: blur(0.8px);
     animation: emberPulse 4s ease-in-out infinite;
   }
   .candle-spot.ember .candle-glow-ring {
-    opacity: 0.15;
-    width: 16px;
-    height: 16px;
+    opacity: 0.1;
+    width: 20px;
+    height: 20px;
   }
   .candle-name {
     font-size: 0.5rem;
-    color: rgba(255,255,255,0.35);
-    margin-top: 3px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 4px;
     text-align: center;
-    max-width: 50px;
+    max-width: 56px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-family: var(--sans);
   }
   .candle-holder {
-    width: 16px;
-    height: 4px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 0 0 3px 3px;
+    width: 20px;
+    height: 5px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
+    border-radius: 0 0 4px 4px;
+    position: relative;
+  }
+  .candle-holder::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: -4px;
+    right: -4px;
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
   }
   @keyframes flicker {
-    0% { transform: translateX(-50%) scale(1) rotate(-1deg); opacity: 0.9; }
-    25% { transform: translateX(-50%) scale(1.05) rotate(1deg); opacity: 1; }
-    50% { transform: translateX(-50%) scale(0.95) rotate(-0.5deg); opacity: 0.85; }
-    75% { transform: translateX(-50%) scale(1.02) rotate(0.5deg); opacity: 0.95; }
-    100% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 0.9; }
+    0%  { transform: translateX(-50%) scaleX(1) scaleY(1) rotate(-1deg); opacity: 0.88; }
+    20% { transform: translateX(-50%) scaleX(1.04) scaleY(1.06) rotate(0.8deg); opacity: 1; }
+    40% { transform: translateX(-50%) scaleX(0.96) scaleY(0.94) rotate(-0.5deg); opacity: 0.82; }
+    60% { transform: translateX(-50%) scaleX(1.02) scaleY(1.03) rotate(0.3deg); opacity: 0.95; }
+    80% { transform: translateX(-50%) scaleX(0.98) scaleY(0.97) rotate(-0.7deg); opacity: 0.9; }
+    100%{ transform: translateX(-50%) scaleX(1) scaleY(1) rotate(0deg); opacity: 0.88; }
   }
   @keyframes emberPulse {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 0.45; }
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.4; }
   }
+  .candle-prompt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+  .candle-prompt input {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    padding: 0.65rem 1rem;
+    border: 1px solid rgba(245,166,35,0.4);
+    border-radius: 2rem;
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.85);
+    outline: none;
+    width: 180px;
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+  .candle-prompt input::placeholder { color: rgba(255,255,255,0.3); }
+  .candle-prompt input:focus { border-color: var(--candle-glow); }
+  .candle-prompt .candle-go-btn {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    padding: 0.65rem 1.4rem;
+    border: 1px solid var(--candle-glow);
+    border-radius: 2rem;
+    background: rgba(245,166,35,0.15);
+    color: var(--candle-glow);
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: all 0.3s;
+  }
+  .candle-prompt .candle-go-btn:hover { background: rgba(245,166,35,0.25); }
   .candle-light-btn {
     font-family: var(--serif);
     font-size: 0.9rem;
@@ -1777,7 +1866,7 @@
     .sticky-raised { font-size: 0.75rem; }
     .guestbook-bouquet { width: 60px; min-height: 48px; }
     .guestbook-entry { gap: 0.75rem; padding: 1rem; }
-    .candle-wall { grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; }
+    .candle-wall { grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 10px; }
     .starmap-section { min-height: 90vh; }
     .starmap-facts { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .starmap-section .section-heading { font-size: 1.5rem; }
@@ -1788,7 +1877,7 @@
 
 <div class="atmosphere-bar">
   <div class="atmosphere-badge" id="atmosphere-badge"></div>
-  <button class="atmo-cycle-btn" id="atmo-cycle" title="Cycle time of day">&#x25B6;</button>
+  <div class="atmosphere-bar-note" data-i18n="atmoNote">Reflecting the sky where she rests</div>
 </div>
 
 <div class="petal-layer" id="petal-layer"></div>
@@ -1827,7 +1916,12 @@
     <h2 class="section-heading">Light a Candle</h2>
     <p class="section-sub">Each flame burns for 24 hours, then rests as a glowing ember. On her birthday and anniversary, every ember reignites together.</p>
     <div class="candle-wall" id="candle-wall"></div>
-    <button class="candle-light-btn" id="light-candle-btn">Light a candle for Reina</button>
+    <button class="candle-light-btn" id="light-candle-btn" data-i18n="candleBtn">Light a candle for Reina</button>
+    <div class="candle-prompt" id="candle-prompt" style="display:none">
+      <label for="candle-name-input" class="sr-only">Your name</label>
+      <input type="text" id="candle-name-input" placeholder="Your name" maxlength="50">
+      <button type="button" class="candle-go-btn" id="candle-go-btn">Light</button>
+    </div>
     <p class="candle-count" id="candle-count">23 candles lit</p>
     <p class="candle-anniversary-note">All candles reignite on March 15 and July 13</p>
   </section>
@@ -2108,39 +2202,52 @@
 // ===== TIME-AWARE ATMOSPHERE =====
 (function() {
   var phases = [
-    { cls: 'dawn', label: 'Dawn in Miami', icon: '5:50 AM' },
-    { cls: 'day', label: 'Daytime in Miami', icon: '11:00 AM' },
-    { cls: 'golden', label: 'Golden hour', icon: '5:30 PM' },
-    { cls: 'dusk', label: 'Dusk in Miami', icon: '7:45 PM' },
-    { cls: 'night', label: 'Night in Miami', icon: '10:00 PM' }
+    { cls: 'dawn', label: 'Dawn' },
+    { cls: 'day', label: 'Daytime' },
+    { cls: 'golden', label: 'Golden hour' },
+    { cls: 'dusk', label: 'Dusk' },
+    { cls: 'night', label: 'Night' }
   ];
 
-  var hour = new Date().getHours();
-  var currentIdx;
-  if (hour >= 5 && hour < 8) currentIdx = 0;
-  else if (hour >= 8 && hour < 16) currentIdx = 1;
-  else if (hour >= 16 && hour < 19) currentIdx = 2;
-  else if (hour >= 19 && hour < 21) currentIdx = 3;
-  else currentIdx = 4;
+  function getMiamiTime() {
+    var now = new Date();
+    var miami = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    return miami;
+  }
+
+  function formatTime(d) {
+    var h = d.getHours();
+    var m = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
+  }
+
+  function getPhaseIdx(h) {
+    if (h >= 5 && h < 8) return 0;
+    if (h >= 8 && h < 16) return 1;
+    if (h >= 16 && h < 19) return 2;
+    if (h >= 19 && h < 21) return 3;
+    return 4;
+  }
 
   var body = document.body;
   var badge = document.getElementById('atmosphere-badge');
-  var cycleBtn = document.getElementById('atmo-cycle');
+  var currentIdx = -1;
 
-  function applyPhase(idx) {
-    phases.forEach(function(ph) { body.classList.remove('atmosphere-' + ph.cls); });
-    body.classList.add('atmosphere-' + phases[idx].cls);
-    if (badge) badge.textContent = phases[idx].label + ' · ' + phases[idx].icon;
+  function update() {
+    var miami = getMiamiTime();
+    var idx = getPhaseIdx(miami.getHours());
+    if (idx !== currentIdx) {
+      phases.forEach(function(ph) { body.classList.remove('atmosphere-' + ph.cls); });
+      body.classList.add('atmosphere-' + phases[idx].cls);
+      currentIdx = idx;
+    }
+    if (badge) badge.textContent = 'Miami, FL · ' + formatTime(miami);
   }
 
-  applyPhase(currentIdx);
-
-  if (cycleBtn) {
-    cycleBtn.addEventListener('click', function() {
-      currentIdx = (currentIdx + 1) % phases.length;
-      applyPhase(currentIdx);
-    });
-  }
+  update();
+  setInterval(update, 60000);
 })();
 
 // ===== SUNFLOWER PETALS =====
@@ -2194,10 +2301,10 @@
   var sl = document.createElement('div');
   sl.className = 'stars-layer';
   document.body.appendChild(sl);
-  var total = 130;
+  var total = 45;
   for (var i = 0; i < total; i++) {
     var s = document.createElement('div');
-    var isBright = i < 12;
+    var isBright = i < 5;
     var size = isBright ? (2.5 + Math.random() * 2) : (1 + Math.random() * 2);
     s.className = isBright ? 'star star-bright' : 'star';
     s.style.width = size + 'px';
@@ -2224,6 +2331,9 @@
 (function() {
   var wall = document.getElementById('candle-wall');
   var btn = document.getElementById('light-candle-btn');
+  var prompt = document.getElementById('candle-prompt');
+  var nameInput = document.getElementById('candle-name-input');
+  var goBtn = document.getElementById('candle-go-btn');
   var countEl = document.getElementById('candle-count');
   if (!wall || !btn || !countEl) return;
   var names = ['Maria', 'Jorge', 'Ana', 'Whilly', 'Elias', 'Rosa', 'Carlos', 'Lucia', 'Miguel', 'Carmen', 'Alexis', 'Sofia', 'Diego', 'Isabel', 'Pedro', 'Valeria', 'Andres', 'Clara', 'Roberto', 'Elena', 'Felix', 'Gabriela', 'Luis'];
@@ -2252,23 +2362,51 @@
 
   countEl.textContent = litCount + ' candles lit';
 
-  btn.addEventListener('click', function() {
+  function lightCandle(visitorName) {
     var unlit = wall.querySelectorAll('.candle-spot:not(.lit):not(.ember)');
-    if (unlit.length > 0) {
-      var next = unlit[0];
-      next.classList.add('lit');
-      var storedName = '';
-      try { storedName = localStorage.getItem('reina_visitor_name') || ''; } catch(e) {}
-      var candleNameEl = next.querySelector('.candle-name');
-      candleNameEl.textContent = storedName || 'You';
-      candleNameEl.dataset.visitor = '1';
-      litCount++;
-      countEl.textContent = litCount + ' candles lit';
-      btn.textContent = 'Your candle is lit';
-      btn.disabled = true;
-      btn.style.opacity = '0.5';
-      btn.style.cursor = 'default';
+    if (unlit.length === 0) return;
+    var next = unlit[0];
+    next.classList.add('lit');
+    var candleNameEl = next.querySelector('.candle-name');
+    candleNameEl.textContent = visitorName || 'You';
+    candleNameEl.dataset.visitor = '1';
+    litCount++;
+    countEl.textContent = litCount + ' candles lit';
+    prompt.style.display = 'none';
+    btn.textContent = 'Your candle is lit';
+    btn.style.display = '';
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'default';
+
+    try { localStorage.setItem('reina_visitor_name', visitorName); } catch(e) {}
+    var gbName = document.getElementById('gb-name');
+    if (gbName && !gbName.value) gbName.value = visitorName;
+    var vc = document.querySelector('.candle-name[data-visitor]');
+    if (vc && vc !== candleNameEl) vc.textContent = visitorName;
+  }
+
+  btn.addEventListener('click', function() {
+    var storedName = '';
+    try { storedName = localStorage.getItem('reina_visitor_name') || ''; } catch(e) {}
+    if (storedName) {
+      lightCandle(storedName);
+    } else {
+      btn.style.display = 'none';
+      prompt.style.display = 'flex';
+      nameInput.focus();
     }
+  });
+
+  function submitName() {
+    var n = nameInput.value.trim();
+    if (!n) { nameInput.focus(); return; }
+    lightCandle(n);
+  }
+
+  goBtn.addEventListener('click', submitName);
+  nameInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitName();
   });
 })();
 
