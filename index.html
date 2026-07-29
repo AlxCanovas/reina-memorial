@@ -28,6 +28,12 @@
     --text-mid: rgba(42,26,26,0.6);
     --text-light: rgba(42,26,26,0.4);
     --border: rgba(42,26,26,0.07);
+    --night: #0f0e1a;
+    --night-mid: #1a1930;
+    --candle-glow: #F5A623;
+    --candle-warm: #E8913A;
+    --ember: rgba(245,166,35,0.3);
+    --mono: 'SF Mono', 'Fira Code', monospace;
   }
 
   body {
@@ -37,6 +43,580 @@
     background: var(--ivory);
     color: var(--text);
     margin: 0;
+    transition: background 1.5s ease;
+  }
+
+  /* ---------- ATMOSPHERE TIME-OF-DAY ---------- */
+  body.atmosphere-dawn {
+    --ivory: #FDF6EC;
+    --ivory-warm: #F8ECDA;
+    --text: #2a1a1a;
+    --text-mid: rgba(42,26,26,0.6);
+  }
+  body.atmosphere-day {
+    --ivory: #FAF5EB;
+    --ivory-warm: #F5EEE0;
+    --text: #2a1a1a;
+    --text-mid: rgba(42,26,26,0.6);
+  }
+  body.atmosphere-golden {
+    --ivory: #F5E6CA;
+    --ivory-warm: #EDDBB5;
+    --text: #2a1a1a;
+    --text-mid: rgba(42,26,26,0.6);
+  }
+  body.atmosphere-dusk {
+    --ivory: #D4C4AE;
+    --ivory-warm: #C8B89E;
+    --text: #1a1210;
+    --text-mid: rgba(26,18,16,0.65);
+  }
+  body.atmosphere-night {
+    --ivory: #1E1B16;
+    --ivory-warm: #2A261E;
+    --text: #E8DFD0;
+    --text-mid: rgba(232,223,208,0.6);
+    --text-light: rgba(232,223,208,0.35);
+    --border: rgba(232,223,208,0.08);
+    --gold: #D4922E;
+  }
+  body.atmosphere-night .impact-card,
+  body.atmosphere-night .guestbook-entry {
+    background: #2A261E;
+    border-color: rgba(232,223,208,0.1);
+  }
+  body.atmosphere-night .impact-card:hover { border-color: var(--gold); }
+  body.atmosphere-night .guestbook {
+    background: linear-gradient(180deg, #2A261E 0%, #1E1B16 100%);
+  }
+  body.atmosphere-night .memorial-gallery {
+    background: linear-gradient(180deg, #2A261E 0%, #1E1B16 100%);
+  }
+  body.atmosphere-night .story { background: #1E1B16; }
+  body.atmosphere-night .moment { background: #2A261E; }
+  body.atmosphere-night .support { background: #2A261E; }
+  body.atmosphere-night .impact-section { background: #2A261E; }
+
+  .atmosphere-bar {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 100;
+  }
+  .atmosphere-badge {
+    font-family: var(--sans);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    padding: 6px 14px;
+    border-radius: 100px;
+    background: rgba(42,26,26,0.06);
+    color: var(--text-light);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.5s;
+  }
+  body.atmosphere-night .atmosphere-badge {
+    background: rgba(255,255,255,0.08);
+    color: rgba(232,223,208,0.5);
+  }
+  .atmo-cycle-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(42,26,26,0.1);
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s;
+  }
+  .atmo-cycle-btn:hover { background: rgba(255,255,255,0.8); }
+  body.atmosphere-night .atmo-cycle-btn {
+    border-color: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* ---------- LABEL TAG ---------- */
+  .label-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid var(--gold-stroke-light);
+    border-radius: 100px;
+  }
+
+  /* ---------- CANDLE WALL ---------- */
+  .candle-section {
+    padding: 5rem 1.5rem;
+    background: var(--night);
+    position: relative;
+    overflow: hidden;
+  }
+  .candle-section .section-heading {
+    color: rgba(255,255,255,0.85);
+  }
+  .candle-section .section-sub {
+    color: rgba(255,255,255,0.45);
+  }
+  .section-sub {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    max-width: 460px;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+  .candle-wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+    gap: 12px;
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto 2rem;
+  }
+  .candle-spot {
+    width: 44px;
+    height: 60px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    transition: transform 0.3s;
+    justify-self: center;
+  }
+  .candle-spot:hover { transform: scale(1.1); }
+  .candle-body {
+    width: 8px;
+    height: 28px;
+    background: linear-gradient(180deg, #F5E6D0 0%, #E8D5B8 100%);
+    border-radius: 2px 2px 0 0;
+    position: relative;
+  }
+  .candle-wick {
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 4px;
+    background: #555;
+  }
+  .candle-flame {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 14px;
+    background: radial-gradient(ellipse at 50% 80%, #FFE4A0 0%, #F5A623 40%, #E8630A 70%, transparent 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0;
+    transition: opacity 0.8s;
+    filter: blur(0.5px);
+  }
+  .candle-spot.lit .candle-flame {
+    opacity: 1;
+    animation: flicker 3s ease-in-out infinite alternate;
+  }
+  .candle-glow-ring {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, rgba(245,166,35,0.25) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 1s;
+    pointer-events: none;
+  }
+  .candle-spot.lit .candle-glow-ring { opacity: 1; }
+  .candle-spot.ember .candle-flame {
+    opacity: 0.3;
+    width: 4px;
+    height: 6px;
+    top: -10px;
+    filter: blur(1px);
+    animation: emberPulse 4s ease-in-out infinite;
+  }
+  .candle-spot.ember .candle-glow-ring {
+    opacity: 0.15;
+    width: 16px;
+    height: 16px;
+  }
+  .candle-name {
+    font-size: 0.5rem;
+    color: rgba(255,255,255,0.35);
+    margin-top: 3px;
+    text-align: center;
+    max-width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--sans);
+  }
+  .candle-holder {
+    width: 16px;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 0 0 3px 3px;
+  }
+  @keyframes flicker {
+    0% { transform: translateX(-50%) scale(1) rotate(-1deg); opacity: 0.9; }
+    25% { transform: translateX(-50%) scale(1.05) rotate(1deg); opacity: 1; }
+    50% { transform: translateX(-50%) scale(0.95) rotate(-0.5deg); opacity: 0.85; }
+    75% { transform: translateX(-50%) scale(1.02) rotate(0.5deg); opacity: 0.95; }
+    100% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 0.9; }
+  }
+  @keyframes emberPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.45; }
+  }
+  .candle-light-btn {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    padding: 0.75rem 2.2rem;
+    border: 1px solid rgba(245,166,35,0.4);
+    border-radius: 2rem;
+    background: transparent;
+    color: var(--candle-glow);
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: all 0.3s;
+    margin-top: 1rem;
+  }
+  .candle-light-btn:hover {
+    background: rgba(245,166,35,0.1);
+    border-color: var(--candle-glow);
+  }
+  .candle-count {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.3);
+    margin-top: 1.5rem;
+    font-family: var(--serif);
+  }
+  .candle-anniversary-note {
+    font-size: 0.72rem;
+    color: rgba(245,166,35,0.5);
+    font-style: italic;
+    margin-top: 0.5rem;
+    font-family: var(--serif);
+  }
+
+  /* ---------- AUDIO MEMORIES ---------- */
+  .audio-section {
+    padding: 5rem 1.5rem;
+    background: var(--ivory);
+  }
+  .audio-grid {
+    max-width: 520px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .audio-card {
+    background: var(--ivory-warm);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    text-align: left;
+  }
+  .audio-card:hover {
+    border-color: var(--gold-stroke);
+    box-shadow: 0 2px 12px rgba(42,26,26,0.05);
+  }
+  .audio-card.playing {
+    border-color: var(--gold);
+    background: rgba(196,122,34,0.04);
+  }
+  .audio-play-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 8px rgba(196,122,34,0.3);
+  }
+  .audio-card:hover .audio-play-btn { transform: scale(1.08); }
+  .audio-play-btn svg { fill: #fff; }
+  .audio-meta {
+    flex: 1;
+    min-width: 0;
+  }
+  .audio-title {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .audio-by {
+    font-size: 0.78rem;
+    color: var(--text-mid);
+  }
+  .audio-waveform {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 24px;
+    margin-top: 6px;
+  }
+  .audio-bar {
+    width: 3px;
+    border-radius: 1.5px;
+    background: rgba(196,122,34,0.2);
+    transition: background 0.3s;
+  }
+  .audio-bar.played { background: var(--gold); }
+  .audio-card.playing .audio-bar {
+    animation: waveAnim 0.8s ease-in-out infinite alternate;
+  }
+  @keyframes waveAnim {
+    0% { transform: scaleY(0.5); }
+    100% { transform: scaleY(1); }
+  }
+  .audio-duration {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .audio-record-btn {
+    font-family: var(--serif);
+    font-size: 0.88rem;
+    padding: 0.7rem 2rem;
+    border: 1px solid var(--gold-stroke);
+    border-radius: 2rem;
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.3s;
+    margin-top: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .audio-record-btn:hover {
+    background: rgba(196,122,34,0.06);
+    border-color: var(--gold);
+  }
+  .record-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c0392b;
+  }
+
+  /* ---------- STAR MAP ---------- */
+  .starmap-section {
+    padding: 6rem 1.5rem;
+    background: var(--night);
+    position: relative;
+    overflow: hidden;
+    min-height: 80vh;
+  }
+  .starmap-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+  .starmap-section > *:not(canvas) { position: relative; z-index: 1; }
+  .starmap-section .section-heading {
+    color: rgba(255,255,255,0.8);
+  }
+  .starmap-subtitle {
+    font-family: var(--serif);
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.35);
+    font-style: italic;
+    letter-spacing: 0.06em;
+    margin-top: 0.5rem;
+  }
+  .starmap-date {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    color: rgba(245,166,35,0.6);
+    letter-spacing: 0.12em;
+    margin-bottom: 2rem;
+  }
+  .starmap-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto 3rem;
+  }
+  .starmap-fact {
+    padding: 0.8rem 0.6rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+  }
+  .starmap-fact-value {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: rgba(245,196,100,0.8);
+    margin-bottom: 2px;
+  }
+  .starmap-fact-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+  }
+  .starmap-constellation-label {
+    position: absolute;
+    font-family: var(--serif);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.18);
+    pointer-events: none;
+  }
+
+  /* ---------- ANNUAL LAYERS ---------- */
+  .annual-section {
+    padding: 5rem 1.5rem;
+    background: var(--ivory);
+  }
+  .annual-timeline {
+    max-width: 480px;
+    width: 100%;
+    position: relative;
+    padding-left: 32px;
+  }
+  .annual-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--gold) 0%, var(--gold-stroke-light) 100%);
+  }
+  .annual-layer {
+    position: relative;
+    margin-bottom: 2.5rem;
+    text-align: left;
+  }
+  .annual-dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: var(--ivory);
+  }
+  .annual-layer.current .annual-dot {
+    background: var(--gold);
+    box-shadow: 0 0 0 4px rgba(196,122,34,0.15);
+  }
+  .annual-layer.future .annual-dot {
+    border-color: var(--text-light);
+    border-style: dashed;
+  }
+  .annual-year {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.04em;
+  }
+  .annual-layer.future .annual-year { color: var(--text-light); }
+  .annual-desc {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+  .annual-count {
+    font-size: 0.75rem;
+    color: var(--gold);
+    margin-top: 0.3rem;
+    font-family: var(--serif);
+  }
+  .annual-layer.future .annual-desc {
+    color: var(--text-light);
+    font-style: italic;
+  }
+
+  /* ---------- QR FOOTER ---------- */
+  .qr-footer {
+    padding: 3rem 1.5rem;
+    background: var(--night);
+    text-align: center;
+  }
+  .qr-box {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 1rem;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+  }
+  .qr-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(11, 1fr);
+    gap: 1px;
+  }
+  .qr-cell {
+    border-radius: 1px;
+  }
+  .qr-cell.dark { background: var(--night); }
+  .qr-cell.light { background: #fff; }
+  .qr-title {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.3rem;
+  }
+  .qr-sub {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.3);
+    max-width: 280px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .qr-url {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--candle-glow);
+    letter-spacing: 0.08em;
+    margin-top: 0.8rem;
+    opacity: 0.7;
   }
 
   /* ---------- sections ---------- */
@@ -1107,8 +1687,14 @@
     .sticky-raised { font-size: 0.75rem; }
     .guestbook-bouquet { width: 60px; min-height: 48px; }
     .guestbook-entry { gap: 0.75rem; padding: 1rem; }
+    .candle-wall { grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 8px; }
   }
 </style>
+
+<div class="atmosphere-bar">
+  <div class="atmosphere-badge" id="atmosphere-badge"></div>
+  <button class="atmo-cycle-btn" id="atmo-cycle" title="Cycle time of day">&#x25B6;</button>
+</div>
 
 <main>
 
@@ -1137,6 +1723,19 @@
   <div class="social-proof-bar" id="social-proof-bar">
     <p class="social-proof-text" id="social-proof-text"></p>
   </div>
+
+  <!-- CANDLE WALL -->
+  <section class="candle-section">
+    <span class="label-tag">New</span>
+    <h2 class="section-heading">Light a Candle</h2>
+    <p class="section-sub">Each flame burns for 24 hours, then rests as a glowing ember. On her birthday and anniversary, every ember reignites together.</p>
+    <div class="candle-wall" id="candle-wall"></div>
+    <button class="candle-light-btn" id="light-candle-btn">Light a candle for Reina</button>
+    <p class="candle-count" id="candle-count">23 candles lit</p>
+    <p class="candle-anniversary-note">All candles reignite on March 15 and July 13</p>
+  </section>
+
+  <hr class="divider">
 
   <!-- IMPACT -->
   <section class="impact-section reveal">
@@ -1196,6 +1795,49 @@
     </form>
   </section>
 
+  <!-- AUDIO MEMORIES -->
+  <section class="audio-section">
+    <span class="label-tag">New</span>
+    <h2 class="section-heading">Voices We Carry</h2>
+    <p class="section-sub">Her voice, their stories. Some things are meant to be heard, not read.</p>
+    <div class="audio-grid">
+      <div class="audio-card" data-audio="1" id="audio-1">
+        <div class="audio-play-btn">
+          <svg width="14" height="16" viewBox="0 0 14 16"><polygon points="2,0 14,8 2,16"/></svg>
+        </div>
+        <div class="audio-meta">
+          <div class="audio-title">Reina's voicemail to the family</div>
+          <div class="audio-by">Saved by Jorge</div>
+          <div class="audio-waveform" id="waveform-1"></div>
+        </div>
+        <div class="audio-duration">0:34</div>
+      </div>
+      <div class="audio-card" data-audio="2" id="audio-2">
+        <div class="audio-play-btn">
+          <svg width="14" height="16" viewBox="0 0 14 16"><polygon points="2,0 14,8 2,16"/></svg>
+        </div>
+        <div class="audio-meta">
+          <div class="audio-title">Whilly remembers Saturday mornings</div>
+          <div class="audio-by">Recorded by Whilly Bermudez</div>
+          <div class="audio-waveform" id="waveform-2"></div>
+        </div>
+        <div class="audio-duration">1:12</div>
+      </div>
+      <div class="audio-card" data-audio="3" id="audio-3">
+        <div class="audio-play-btn">
+          <svg width="14" height="16" viewBox="0 0 14 16"><polygon points="2,0 14,8 2,16"/></svg>
+        </div>
+        <div class="audio-meta">
+          <div class="audio-title">"She always laughed between sentences"</div>
+          <div class="audio-by">Recorded by Elias Sanchez</div>
+          <div class="audio-waveform" id="waveform-3"></div>
+        </div>
+        <div class="audio-duration">0:48</div>
+      </div>
+    </div>
+    <button class="audio-record-btn"><span class="record-dot"></span> Leave a voice memory</button>
+  </section>
+
   <hr class="divider">
 
   <!-- PHOTO GALLERY -->
@@ -1228,6 +1870,41 @@
     <button class="story-toggle reveal" id="story-toggle" data-i18n="storyToggle">Read her full story</button>
   </section>
 
+  <!-- STAR MAP -->
+  <section class="starmap-section">
+    <span class="label-tag" style="border-color: rgba(245,166,35,0.25); color: rgba(245,166,35,0.7);">New</span>
+    <h2 class="section-heading">The Night She Was Born</h2>
+    <p class="starmap-date">Santiago de Cuba &mdash; March 15, 1961</p>
+    <div class="starmap-facts">
+      <div class="starmap-fact">
+        <div class="starmap-fact-value">84&#176;F</div>
+        <div class="starmap-fact-label">Temperature</div>
+      </div>
+      <div class="starmap-fact">
+        <div class="starmap-fact-value">Waning crescent</div>
+        <div class="starmap-fact-label">Moon phase</div>
+      </div>
+      <div class="starmap-fact">
+        <div class="starmap-fact-value">E at 9 mph</div>
+        <div class="starmap-fact-label">Trade winds</div>
+      </div>
+      <div class="starmap-fact">
+        <div class="starmap-fact-value">80&#176;F</div>
+        <div class="starmap-fact-label">Caribbean sea</div>
+      </div>
+      <div class="starmap-fact">
+        <div class="starmap-fact-value">Clear skies</div>
+        <div class="starmap-fact-label">83% visibility</div>
+      </div>
+      <div class="starmap-fact">
+        <div class="starmap-fact-value">Pisces</div>
+        <div class="starmap-fact-label">Zodiac sign</div>
+      </div>
+    </div>
+    <canvas class="starmap-canvas" id="starmap-canvas"></canvas>
+    <p class="starmap-subtitle">The darkest moon of the month. The stars were as bright as they'd ever be.</p>
+  </section>
+
   <!-- QUOTE -->
   <section class="moment">
     <canvas class="sf-canvas" id="sf-quote" aria-hidden="true"></canvas>
@@ -1236,6 +1913,36 @@
       ella nunca dej&oacute; de ser quien era&mdash;<br>
       siempre el mismo coraz&oacute;n c&aacute;lido.
     </blockquote>
+  </section>
+
+  <!-- ANNUAL LAYERS -->
+  <section class="annual-section">
+    <span class="label-tag">New</span>
+    <h2 class="section-heading">The Years Ahead</h2>
+    <p class="section-sub">This site grows with time. Each anniversary opens a new chapter for fresh memories, new messages, and continued love.</p>
+    <div class="annual-timeline">
+      <div class="annual-layer current">
+        <div class="annual-dot"></div>
+        <div class="annual-year">Year One &mdash; 2026</div>
+        <div class="annual-desc">The first year. 4 messages, 3 photos, 12 donations, 23 candles lit.</div>
+        <div class="annual-count">Growing</div>
+      </div>
+      <div class="annual-layer future">
+        <div class="annual-dot"></div>
+        <div class="annual-year">Year Two &mdash; 2027</div>
+        <div class="annual-desc">Opens July 13, 2027. A new space for fresh memories.</div>
+      </div>
+      <div class="annual-layer future">
+        <div class="annual-dot"></div>
+        <div class="annual-year">Year Three &mdash; 2028</div>
+        <div class="annual-desc">Opens July 13, 2028. The site remembers.</div>
+      </div>
+      <div class="annual-layer future">
+        <div class="annual-dot"></div>
+        <div class="annual-year">Year Five &mdash; 2031</div>
+        <div class="annual-desc">Five years of love, accumulated.</div>
+      </div>
+    </div>
   </section>
 
   <hr class="divider">
@@ -1258,6 +1965,16 @@
       All contributions go directly toward memorial and&nbsp;family&nbsp;expenses.
     </p>
   </section>
+
+  <!-- QR FOOTER -->
+  <div class="qr-footer">
+    <div class="qr-box">
+      <div class="qr-grid" id="qr-grid"></div>
+    </div>
+    <p class="qr-title">Visit the memorial</p>
+    <p class="qr-sub">Print this QR code for the headstone, urn display, or prayer card. Anyone who scans it arrives here.</p>
+    <p class="qr-url">forreina.com</p>
+  </div>
 
   <!-- PHOTO LIGHTBOX -->
   <div class="photo-lightbox" id="photo-lightbox">
@@ -1287,6 +2004,251 @@
     <span data-i18n="donateNow">Donate Now</span>
   </a>
 </div>
+
+<script>
+// ===== TIME-AWARE ATMOSPHERE =====
+(function() {
+  var phases = [
+    { cls: 'dawn', label: 'Dawn in Miami', icon: '5:50 AM' },
+    { cls: 'day', label: 'Daytime in Miami', icon: '11:00 AM' },
+    { cls: 'golden', label: 'Golden hour', icon: '5:30 PM' },
+    { cls: 'dusk', label: 'Dusk in Miami', icon: '7:45 PM' },
+    { cls: 'night', label: 'Night in Miami', icon: '10:00 PM' }
+  ];
+
+  var hour = new Date().getHours();
+  var currentIdx;
+  if (hour >= 5 && hour < 8) currentIdx = 0;
+  else if (hour >= 8 && hour < 16) currentIdx = 1;
+  else if (hour >= 16 && hour < 19) currentIdx = 2;
+  else if (hour >= 19 && hour < 21) currentIdx = 3;
+  else currentIdx = 4;
+
+  var body = document.body;
+  var badge = document.getElementById('atmosphere-badge');
+  var cycleBtn = document.getElementById('atmo-cycle');
+
+  function applyPhase(idx) {
+    phases.forEach(function(ph) { body.classList.remove('atmosphere-' + ph.cls); });
+    body.classList.add('atmosphere-' + phases[idx].cls);
+    if (badge) badge.textContent = phases[idx].label + ' · ' + phases[idx].icon;
+  }
+
+  applyPhase(currentIdx);
+
+  if (cycleBtn) {
+    cycleBtn.addEventListener('click', function() {
+      currentIdx = (currentIdx + 1) % phases.length;
+      applyPhase(currentIdx);
+    });
+  }
+})();
+
+// ===== CANDLE WALL =====
+(function() {
+  var wall = document.getElementById('candle-wall');
+  var btn = document.getElementById('light-candle-btn');
+  var countEl = document.getElementById('candle-count');
+  if (!wall || !btn || !countEl) return;
+  var names = ['Maria', 'Jorge', 'Ana', 'Whilly', 'Elias', 'Rosa', 'Carlos', 'Lucia', 'Miguel', 'Carmen', 'Alexis', 'Sofia', 'Diego', 'Isabel', 'Pedro', 'Valeria', 'Andres', 'Clara', 'Roberto', 'Elena', 'Felix', 'Gabriela', 'Luis'];
+  var totalCandles = 30;
+  var litCount = 0;
+
+  for (var i = 0; i < totalCandles; i++) {
+    var spot = document.createElement('div');
+    spot.className = 'candle-spot';
+    var isLit = i < 8;
+    var isEmber = i >= 8 && i < 23;
+    if (isLit) { spot.classList.add('lit'); litCount++; }
+    if (isEmber) { spot.classList.add('ember'); litCount++; }
+
+    spot.innerHTML =
+      '<div class="candle-glow-ring"></div>' +
+      '<div class="candle-body"><div class="candle-wick"></div><div class="candle-flame"></div></div>' +
+      '<div class="candle-holder"></div>' +
+      (i < names.length ? '<div class="candle-name">' + names[i] + '</div>' : '<div class="candle-name"></div>');
+
+    if (isLit || isEmber) {
+      spot.querySelector('.candle-flame').style.animationDelay = (Math.random() * 3).toFixed(1) + 's';
+    }
+    wall.appendChild(spot);
+  }
+
+  countEl.textContent = litCount + ' candles lit';
+
+  btn.addEventListener('click', function() {
+    var unlit = wall.querySelectorAll('.candle-spot:not(.lit):not(.ember)');
+    if (unlit.length > 0) {
+      var next = unlit[0];
+      next.classList.add('lit');
+      next.querySelector('.candle-name').textContent = 'You';
+      litCount++;
+      countEl.textContent = litCount + ' candles lit';
+      btn.textContent = 'Your candle is lit';
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'default';
+    }
+  });
+})();
+
+// ===== AUDIO WAVEFORMS =====
+(function() {
+  var waveformIds = ['waveform-1', 'waveform-2', 'waveform-3'];
+  var barCounts = [28, 36, 32];
+  for (var w = 0; w < waveformIds.length; w++) {
+    var el = document.getElementById(waveformIds[w]);
+    if (!el) continue;
+    for (var i = 0; i < barCounts[w]; i++) {
+      var bar = document.createElement('div');
+      bar.className = 'audio-bar';
+      var h = 4 + Math.floor(Math.random() * 18);
+      bar.style.height = h + 'px';
+      bar.style.animationDelay = (i * 0.05) + 's';
+      el.appendChild(bar);
+    }
+  }
+
+  var cards = document.querySelectorAll('.audio-card');
+  cards.forEach(function(card) {
+    card.addEventListener('click', function() {
+      var wasPlaying = card.classList.contains('playing');
+      cards.forEach(function(c) { c.classList.remove('playing'); });
+      if (!wasPlaying) card.classList.add('playing');
+    });
+  });
+})();
+
+// ===== STAR MAP =====
+(function() {
+  var canvas = document.getElementById('starmap-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1);
+    canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1);
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    draw();
+  }
+
+  function seededRandom(seed) {
+    var x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+
+  function draw() {
+    var w = canvas.offsetWidth;
+    var h = canvas.offsetHeight;
+    ctx.clearRect(0, 0, w, h);
+
+    var grad = ctx.createRadialGradient(w/2, h*0.4, 0, w/2, h*0.4, w*0.8);
+    grad.addColorStop(0, '#1a1930');
+    grad.addColorStop(0.4, '#12112a');
+    grad.addColorStop(1, '#0a0a18');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.globalAlpha = 0.04;
+    ctx.beginPath();
+    ctx.ellipse(w*0.5, h*0.35, w*0.6, h*0.12, -0.3, 0, Math.PI*2);
+    ctx.fillStyle = '#c8bef0';
+    ctx.fill();
+    ctx.restore();
+
+    var starCount = Math.floor(w * h / 800);
+    for (var i = 0; i < starCount; i++) {
+      var sx = seededRandom(i * 7 + 1) * w;
+      var sy = seededRandom(i * 13 + 3) * h;
+      var sr = seededRandom(i * 19 + 5);
+      var radius = sr < 0.92 ? 0.5 + sr : 1.2 + sr * 0.8;
+      var brightness = 0.3 + sr * 0.7;
+
+      ctx.beginPath();
+      ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+
+      var colorRoll = seededRandom(i * 31 + 7);
+      if (colorRoll > 0.93) ctx.fillStyle = 'rgba(255,200,140,' + brightness + ')';
+      else if (colorRoll > 0.88) ctx.fillStyle = 'rgba(180,200,255,' + brightness + ')';
+      else ctx.fillStyle = 'rgba(255,255,255,' + brightness + ')';
+      ctx.fill();
+
+      if (sr > 0.88) {
+        ctx.beginPath();
+        ctx.arc(sx, sy, radius * 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.04)';
+        ctx.fill();
+      }
+    }
+
+    var cx = w * 0.5;
+    var cy = h * 0.35;
+    var piscesStars = [
+      [cx - 60, cy - 20],
+      [cx - 30, cy + 10],
+      [cx - 5, cy - 5],
+      [cx + 20, cy + 15],
+      [cx + 50, cy],
+      [cx + 75, cy - 25],
+      [cx + 55, cy - 45],
+      [cx + 30, cy - 35]
+    ];
+
+    ctx.strokeStyle = 'rgba(245,166,35,0.15)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(piscesStars[0][0], piscesStars[0][1]);
+    for (var j = 1; j < piscesStars.length; j++) {
+      ctx.lineTo(piscesStars[j][0], piscesStars[j][1]);
+    }
+    ctx.stroke();
+
+    for (var k = 0; k < piscesStars.length; k++) {
+      ctx.beginPath();
+      ctx.arc(piscesStars[k][0], piscesStars[k][1], 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(245,196,100,0.9)';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(piscesStars[k][0], piscesStars[k][1], 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(245,196,100,0.08)';
+      ctx.fill();
+    }
+
+    ctx.font = '0.55rem ' + getComputedStyle(document.documentElement).getPropertyValue('--serif');
+    ctx.fillStyle = 'rgba(245,196,100,0.3)';
+    ctx.textAlign = 'center';
+    ctx.fillText('PISCES', cx + 10, cy + 40);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+})();
+
+// ===== QR CODE (decorative) =====
+(function() {
+  var grid = document.getElementById('qr-grid');
+  if (!grid) return;
+  var pattern = [
+    1,1,1,1,1,0,1,1,1,1,1,
+    1,0,0,0,1,0,1,0,0,0,1,
+    1,0,1,0,1,0,1,0,1,0,1,
+    1,0,0,0,1,0,1,0,0,0,1,
+    1,1,1,1,1,0,1,1,1,1,1,
+    0,0,0,0,0,0,0,0,0,0,0,
+    1,0,1,1,0,1,0,1,1,0,1,
+    0,0,0,0,0,0,0,0,0,0,0,
+    1,1,1,1,1,0,1,0,1,0,0,
+    1,0,0,0,1,0,0,1,0,1,0,
+    1,0,1,0,1,0,1,0,0,1,1
+  ];
+  for (var i = 0; i < pattern.length; i++) {
+    var cell = document.createElement('div');
+    cell.className = 'qr-cell ' + (pattern[i] ? 'dark' : 'light');
+    grid.appendChild(cell);
+  }
+})();
+</script>
 
 <script>
 (function () {
