@@ -6,7 +6,10 @@ const CACHE_TTL = 300; // 5 minutes
 
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
-  const allowed = (origin === 'https://forreina.com' || origin.endsWith('.vercel.app')) ? origin : 'https://forreina.com';
+  var allowed = 'https://forreina.com';
+  if (origin === 'https://forreina.com' || origin === 'https://www.forreina.com') allowed = origin;
+  else if (origin === 'https://reina-memorial.vercel.app') allowed = origin;
+  else if (origin.startsWith('https://reina-memorial-') && origin.endsWith('-justcheech.vercel.app')) allowed = origin;
   res.setHeader('Access-Control-Allow-Origin', allowed);
   res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
 

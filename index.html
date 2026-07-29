@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>In Loving Memory of Reina Canovas</title>
@@ -7,13 +10,14 @@
 <meta property="og:image" content="https://forreina.com/og-image.jpg">
 <meta property="og:url" content="https://forreina.com">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="In Loving Memory of Reina Canovas">
 <meta name="twitter:description" content="Reina spent her life giving everything to those she loved. Honor her memory and support her family.">
 <meta name="twitter:image" content="https://forreina.com/og-image.jpg">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
   :root {
     --serif: 'Hoefler Text', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
@@ -1746,6 +1750,9 @@
   @media (prefers-reduced-motion: reduce) {
     .sticky-cta { animation: none; }
     .reveal { opacity: 1; transform: none; transition: none; }
+    .sf-petal, .star, .sf-canvas { animation: none !important; }
+    .candle-flame, .candle-ember { animation: none !important; }
+    .scroll-hint-line, .audio-bar { animation: none !important; }
   }
 
   /* ---------- MOBILE ---------- */
@@ -1776,6 +1783,8 @@
     .starmap-section .section-heading { font-size: 1.5rem; }
   }
 </style>
+</head>
+<body>
 
 <div class="atmosphere-bar">
   <div class="atmosphere-badge" id="atmosphere-badge"></div>
@@ -1870,7 +1879,9 @@
     </div>
 
     <form class="guestbook-form reveal" id="guestbook-form">
+      <label for="gb-name" class="sr-only">Your name</label>
       <input type="text" id="gb-name" maxlength="100" placeholder="Your name" data-i18n-placeholder="gbNamePlaceholder" required>
+      <label for="gb-message" class="sr-only">Your message</label>
       <textarea id="gb-message" maxlength="2000" placeholder="Share a memory, a kind word, or a prayer..." data-i18n-placeholder="gbMessagePlaceholder" required></textarea>
       <div class="gb-photo-area">
         <button type="button" class="gb-photo-btn" id="gb-photo-btn" data-i18n="gbPhotoBtn">+ Add photos</button>
@@ -2140,6 +2151,10 @@
   var w = window.innerWidth;
   var h = document.body.scrollHeight;
   layer.style.height = h + 'px';
+  setTimeout(function() {
+    var newH = document.body.scrollHeight;
+    if (newH > h) layer.style.height = newH + 'px';
+  }, 4000);
   var petalCount = Math.max(18, Math.round(h / 280));
 
   for (var i = 0; i < petalCount; i++) {
@@ -2242,7 +2257,11 @@
     if (unlit.length > 0) {
       var next = unlit[0];
       next.classList.add('lit');
-      next.querySelector('.candle-name').textContent = 'You';
+      var storedName = '';
+      try { storedName = localStorage.getItem('reina_visitor_name') || ''; } catch(e) {}
+      var candleNameEl = next.querySelector('.candle-name');
+      candleNameEl.textContent = storedName || 'You';
+      candleNameEl.dataset.visitor = '1';
       litCount++;
       countEl.textContent = litCount + ' candles lit';
       btn.textContent = 'Your candle is lit';
@@ -2422,6 +2441,7 @@
     var petalCount = opts.petals || 19;
     var rotation = opts.rotation || 0;
     var strokeColor = opts.stroke || 'rgba(180,110,30,0.18)';
+    var fillColor = opts.fill || 'rgba(242,201,76,0.08)';
     var lineWidth = opts.lineWidth || 1.2;
 
     ctx.save();
@@ -2435,13 +2455,36 @@
     var petalLen = size * 0.46;
     var centerR = size * 0.18;
 
-    // petals — each a single bezier curve stroke
+    // petal fill pass — light yellow, center stays transparent
+    ctx.fillStyle = fillColor;
     for (var i = 0; i < petalCount; i++) {
       var angle = (i / petalCount) * Math.PI * 2;
       var tipX = Math.cos(angle) * petalLen;
       var tipY = Math.sin(angle) * petalLen;
+      var spread = 0.22;
+      var cp1Angle = angle - spread;
+      var cp2Angle = angle + spread;
+      var cpDist = petalLen * 0.6;
+      var cp1x = Math.cos(cp1Angle) * cpDist;
+      var cp1y = Math.sin(cp1Angle) * cpDist;
+      var cp2x = Math.cos(cp2Angle) * cpDist;
+      var cp2y = Math.sin(cp2Angle) * cpDist;
+      var baseX = Math.cos(angle) * centerR * 0.9;
+      var baseY = Math.sin(angle) * centerR * 0.9;
 
-      // control points create the petal's width
+      ctx.beginPath();
+      ctx.moveTo(baseX, baseY);
+      ctx.bezierCurveTo(cp1x, cp1y, cp1x * 1.1, cp1y * 1.1, tipX, tipY);
+      ctx.bezierCurveTo(cp2x * 1.1, cp2y * 1.1, cp2x, cp2y, baseX, baseY);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // petal stroke pass
+    for (var i = 0; i < petalCount; i++) {
+      var angle = (i / petalCount) * Math.PI * 2;
+      var tipX = Math.cos(angle) * petalLen;
+      var tipY = Math.sin(angle) * petalLen;
       var spread = 0.22;
       var cp1Angle = angle - spread;
       var cp2Angle = angle + spread;
@@ -2451,13 +2494,11 @@
       var cp2x = Math.cos(cp2Angle) * cpDist;
       var cp2y = Math.sin(cp2Angle) * cpDist;
 
-      // outward stroke
       ctx.beginPath();
       ctx.moveTo(Math.cos(angle) * centerR * 0.9, Math.sin(angle) * centerR * 0.9);
       ctx.bezierCurveTo(cp1x, cp1y, cp1x * 1.1, cp1y * 1.1, tipX, tipY);
       ctx.stroke();
 
-      // return stroke (other side of petal)
       ctx.beginPath();
       ctx.moveTo(tipX, tipY);
       ctx.bezierCurveTo(cp2x * 1.1, cp2y * 1.1, cp2x, cp2y,
@@ -2798,6 +2839,21 @@
   var editingToken = null;
   var timerInterval = null;
 
+  try {
+    var savedName = localStorage.getItem('reina_visitor_name');
+    if (savedName && gbName) gbName.value = savedName;
+  } catch(e) {}
+  if (gbName) {
+    gbName.addEventListener('blur', function() {
+      var n = gbName.value.trim();
+      if (n) {
+        try { localStorage.setItem('reina_visitor_name', n); } catch(e) {}
+        var vc = document.querySelector('.candle-name[data-visitor]');
+        if (vc) vc.textContent = n;
+      }
+    });
+  }
+
   var gbPhotoBtn = document.getElementById('gb-photo-btn');
   var gbPhotoInput = document.getElementById('gb-photo-input');
   var gbPhotoThumbs = document.getElementById('gb-photo-thumbs');
@@ -2806,6 +2862,10 @@
   var MAX_PHOTOS = 5;
 
   function renderPhotoThumbs() {
+    var oldImgs = gbPhotoThumbs.querySelectorAll('img');
+    for (var oi = 0; oi < oldImgs.length; oi++) {
+      try { URL.revokeObjectURL(oldImgs[oi].src); } catch(e) {}
+    }
     gbPhotoThumbs.innerHTML = '';
     selectedPhotoFiles.forEach(function (file, idx) {
       var wrap = document.createElement('div');
@@ -3274,7 +3334,7 @@
       if (data.entry && data.editToken) {
         saveMyMessage(data.entry.id, data.editToken, data.entry.timestamp);
       }
-      gbName.value = '';
+      try { localStorage.setItem('reina_visitor_name', name); } catch(e) {}
       gbMessage.value = '';
       selectedPhotoFiles = [];
       gbPhotoInput.value = '';
@@ -3351,6 +3411,7 @@
     var newImg = document.createElement('img');
     newImg.src = photo.url;
     newImg.alt = photo.caption || photo.name;
+    newImg.onerror = function() { this.style.display = 'none'; };
     mgPreview.appendChild(newImg);
     var imgs = mgPreview.querySelectorAll('img');
     for (var i = 0; i < imgs.length - 1; i++) {
@@ -3374,6 +3435,14 @@
       renderGalleryPreview((galleryCurrent + 1) % galleryPhotos.length);
     }, 4500);
   }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      clearInterval(galleryCycleTimer);
+    } else if (galleryPhotos.length > 1) {
+      startGalleryCycle();
+    }
+  });
 
   function loadGallery() {
     fetch('/api/photos')
@@ -3469,3 +3538,5 @@
   loadGallery();
 })();
 </script>
+</body>
+</html>

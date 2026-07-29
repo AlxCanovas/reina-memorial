@@ -1,4 +1,5 @@
 import { kv } from '@vercel/kv';
+import { randomUUID } from 'crypto';
 
 const MESSAGES_KEY = 'memorial:messages';
 const MAX_MESSAGES = 500;
@@ -50,7 +51,9 @@ function makeId() {
 
 function getCorsOrigin(req) {
   const origin = req.headers.origin || '';
-  if (origin === 'https://forreina.com' || origin.endsWith('.vercel.app')) return origin;
+  if (origin === 'https://forreina.com' || origin === 'https://www.forreina.com') return origin;
+  if (origin === 'https://reina-memorial.vercel.app') return origin;
+  if (origin.startsWith('https://reina-memorial-') && origin.endsWith('-justcheech.vercel.app')) return origin;
   return 'https://forreina.com';
 }
 
@@ -97,7 +100,7 @@ export default async function handler(req, res) {
       }
 
       const id = makeId();
-      const editToken = makeId();
+      const editToken = randomUUID();
 
       const entry = {
         id,
@@ -108,8 +111,8 @@ export default async function handler(req, res) {
       };
 
       if (Array.isArray(photoUrls) && photoUrls.length > 0) {
-        entry.photoUrls = photoUrls.filter(u => typeof u === 'string' && u.startsWith('https://')).slice(0, 5);
-      } else if (photoUrl && typeof photoUrl === 'string' && photoUrl.startsWith('https://')) {
+        entry.photoUrls = photoUrls.filter(u => typeof u === 'string' && u.includes('.public.blob.vercel-storage.com/')).slice(0, 5);
+      } else if (photoUrl && typeof photoUrl === 'string' && photoUrl.includes('.public.blob.vercel-storage.com/')) {
         entry.photoUrls = [photoUrl];
       }
 

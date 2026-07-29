@@ -16,9 +16,22 @@ export const config = {
   api: { bodyParser: { sizeLimit: '5mb' } }
 };
 
+const BLOCKED_WORDS = [
+  'fuck','shit','damn','bitch','bastard','dick','cock','pussy','cunt',
+  'whore','slut','nigger','nigga','retard','puta','mierda','coño',
+  'pendejo','cabron','cabrón','verga','maricón','maricon'
+];
+
+function isClean(text) {
+  const lower = text.toLowerCase().replace(/[^a-záéíóúñü\s]/g, '');
+  return !lower.split(/\s+/).some(w => BLOCKED_WORDS.includes(w));
+}
+
 function getCorsOrigin(req) {
   const origin = req.headers.origin || '';
-  if (origin === 'https://forreina.com' || origin.endsWith('.vercel.app')) return origin;
+  if (origin === 'https://forreina.com' || origin === 'https://www.forreina.com') return origin;
+  if (origin === 'https://reina-memorial.vercel.app') return origin;
+  if (origin.startsWith('https://reina-memorial-') && origin.endsWith('-justcheech.vercel.app')) return origin;
   return 'https://forreina.com';
 }
 
@@ -45,6 +58,15 @@ export default async function handler(req, res) {
 
       if (!image || !name) {
         return res.status(400).json({ error: 'image and name required' });
+      }
+      if (typeof name !== 'string' || name.length > 100) {
+        return res.status(400).json({ error: 'Name too long (max 100 characters)' });
+      }
+      if (caption && (typeof caption !== 'string' || caption.length > 500)) {
+        return res.status(400).json({ error: 'Caption too long (max 500 characters)' });
+      }
+      if (!isClean(name) || (caption && !isClean(caption))) {
+        return res.status(400).json({ error: 'Inappropriate content' });
       }
 
       const match = image.match(/^data:image\/(jpeg|png|webp);base64,(.+)$/);
