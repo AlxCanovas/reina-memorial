@@ -708,12 +708,16 @@
     width: 100%; height: 100%;
     pointer-events: none;
     z-index: 0;
-    animation: sunflowerSway 7s ease-in-out infinite;
+    animation: sunflowerSway 8s ease-in-out infinite;
+    will-change: transform;
   }
   @keyframes sunflowerSway {
     0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    30% { transform: translate(5px, -2px) rotate(0.6deg); }
-    70% { transform: translate(-4px, 1px) rotate(-0.5deg); }
+    15% { transform: translate(10px, -4px) rotate(1.5deg); }
+    35% { transform: translate(-7px, 3px) rotate(-1deg); }
+    55% { transform: translate(14px, -2px) rotate(2deg); }
+    75% { transform: translate(-10px, 4px) rotate(-1.8deg); }
+    90% { transform: translate(4px, -2px) rotate(0.6deg); }
   }
   section > *:not(.sf-canvas) { position: relative; z-index: 1; }
 
