@@ -2,7 +2,8 @@
   "rewrites": [
     { "source": "/api/messages", "destination": "/api/messages" },
     { "source": "/api/campaign", "destination": "/api/campaign" },
-    { "source": "/api/photos", "destination": "/api/photos" }
+    { "source": "/api/photos", "destination": "/api/photos" },
+    { "source": "/api/candles", "destination": "/api/candles" }
   ],
   "headers": [
     {

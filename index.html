@@ -22,10 +22,10 @@
   :root {
     --serif: 'Hoefler Text', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
     --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --gold: #C47A22;
-    --gold-light: #D4922E;
-    --gold-stroke: rgba(180,110,30,0.35);
-    --gold-stroke-light: rgba(180,110,30,0.12);
+    --gold: #CC9900;
+    --gold-light: #DDB020;
+    --gold-stroke: rgba(200,150,10,0.35);
+    --gold-stroke-light: rgba(200,150,10,0.12);
     --ivory: #FFFFFF;
     --ivory-warm: #F9F7F4;
     --text: #2a1a1a;
@@ -85,7 +85,7 @@
     --text-mid: rgba(216,212,232,0.6);
     --text-light: rgba(216,212,232,0.35);
     --border: rgba(216,212,232,0.08);
-    --gold: #D4922E;
+    --gold: #DDB020;
   }
   body.atmosphere-night .impact-card,
   body.atmosphere-night .guestbook-entry {
@@ -1846,6 +1846,8 @@
 
   /* ---------- MOBILE ---------- */
   @media (max-width: 640px) {
+    .atmosphere-bar { position: absolute; top: 8px; right: 8px; }
+    .atmosphere-bar-note { display: none; }
     .hero { min-height: 100vh; min-height: 100dvh; padding: 2rem 1.25rem 2.5rem; gap: 1rem; justify-content: center; }
     .hero-photo { width: 200px; height: 200px; }
     .hero h1 { font-size: 2.4rem; }
@@ -2336,61 +2338,87 @@
   var goBtn = document.getElementById('candle-go-btn');
   var countEl = document.getElementById('candle-count');
   if (!wall || !btn || !countEl) return;
-  var names = ['Maria', 'Jorge', 'Ana', 'Whilly', 'Elias', 'Rosa', 'Carlos', 'Lucia', 'Miguel', 'Carmen', 'Alexis', 'Sofia', 'Diego', 'Isabel', 'Pedro', 'Valeria', 'Andres', 'Clara', 'Roberto', 'Elena', 'Felix', 'Gabriela', 'Luis'];
-  var totalCandles = 30;
-  var litCount = 0;
 
-  for (var i = 0; i < totalCandles; i++) {
+  var DAY_MS = 24 * 60 * 60 * 1000;
+  var ANNIVERSARY = [
+    function(d) { return d.getMonth() === 2 && d.getDate() === 15; },
+    function(d) { return d.getMonth() === 6 && d.getDate() === 13; }
+  ];
+  var isAnniversary = ANNIVERSARY.some(function(fn) { return fn(new Date()); });
+
+  function makeSpot(name, state) {
     var spot = document.createElement('div');
-    spot.className = 'candle-spot';
-    var isLit = i < 8;
-    var isEmber = i >= 8 && i < 23;
-    if (isLit) { spot.classList.add('lit'); litCount++; }
-    if (isEmber) { spot.classList.add('ember'); litCount++; }
-
+    spot.className = 'candle-spot' + (state ? ' ' + state : '');
     spot.innerHTML =
       '<div class="candle-glow-ring"></div>' +
       '<div class="candle-body"><div class="candle-wick"></div><div class="candle-flame"></div></div>' +
       '<div class="candle-holder"></div>' +
-      (i < names.length ? '<div class="candle-name">' + names[i] + '</div>' : '<div class="candle-name"></div>');
-
-    if (isLit || isEmber) {
+      '<div class="candle-name">' + (name || '') + '</div>';
+    if (state) {
       spot.querySelector('.candle-flame').style.animationDelay = (Math.random() * 3).toFixed(1) + 's';
     }
-    wall.appendChild(spot);
+    return spot;
   }
 
-  countEl.textContent = litCount + ' candles lit';
+  function renderWall(candles) {
+    wall.innerHTML = '';
+    var now = Date.now();
+    var litCount = 0;
+    candles.forEach(function(c) {
+      var age = now - c.timestamp;
+      var state = (age < DAY_MS || isAnniversary) ? 'lit' : 'ember';
+      litCount++;
+      wall.appendChild(makeSpot(c.name, state));
+    });
+    var emptySlots = Math.max(5, 8 - (candles.length % 8));
+    for (var i = 0; i < emptySlots; i++) {
+      wall.appendChild(makeSpot('', ''));
+    }
+    countEl.textContent = litCount + (litCount === 1 ? ' candle lit' : ' candles lit');
+  }
 
-  function lightCandle(visitorName) {
-    var unlit = wall.querySelectorAll('.candle-spot:not(.lit):not(.ember)');
-    if (unlit.length === 0) return;
-    var next = unlit[0];
-    next.classList.add('lit');
-    var candleNameEl = next.querySelector('.candle-name');
-    candleNameEl.textContent = visitorName || 'You';
-    candleNameEl.dataset.visitor = '1';
-    litCount++;
-    countEl.textContent = litCount + ' candles lit';
+  function disableBtn(text) {
     prompt.style.display = 'none';
-    btn.textContent = 'Your candle is lit';
     btn.style.display = '';
+    btn.textContent = text;
     btn.disabled = true;
     btn.style.opacity = '0.5';
     btn.style.cursor = 'default';
+  }
 
-    try { localStorage.setItem('reina_visitor_name', visitorName); } catch(e) {}
-    var gbName = document.getElementById('gb-name');
-    if (gbName && !gbName.value) gbName.value = visitorName;
-    var vc = document.querySelector('.candle-name[data-visitor]');
-    if (vc && vc !== candleNameEl) vc.textContent = visitorName;
+  function lightCandleAPI(visitorName) {
+    btn.style.display = 'none';
+    prompt.style.display = 'none';
+    fetch('/api/candles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: visitorName })
+    })
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, status: r.status, data: d }; }); })
+    .then(function(res) {
+      if (res.ok) {
+        try { localStorage.setItem('reina_visitor_name', visitorName); } catch(e) {}
+        try { localStorage.setItem('reina_candle_lit', '1'); } catch(e) {}
+        var gbName = document.getElementById('gb-name');
+        if (gbName && !gbName.value) gbName.value = visitorName;
+        loadCandles();
+        disableBtn('Your candle is lit');
+      } else if (res.status === 429) {
+        disableBtn('Your candle is already burning');
+      } else {
+        disableBtn('Something went wrong');
+      }
+    })
+    .catch(function() {
+      disableBtn('Could not connect');
+    });
   }
 
   btn.addEventListener('click', function() {
     var storedName = '';
     try { storedName = localStorage.getItem('reina_visitor_name') || ''; } catch(e) {}
     if (storedName) {
-      lightCandle(storedName);
+      lightCandleAPI(storedName);
     } else {
       btn.style.display = 'none';
       prompt.style.display = 'flex';
@@ -2401,13 +2429,31 @@
   function submitName() {
     var n = nameInput.value.trim();
     if (!n) { nameInput.focus(); return; }
-    lightCandle(n);
+    lightCandleAPI(n);
   }
 
   goBtn.addEventListener('click', submitName);
   nameInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') submitName();
   });
+
+  function loadCandles() {
+    fetch('/api/candles')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var candles = data.candles || [];
+        renderWall(candles);
+      })
+      .catch(function() {
+        renderWall([]);
+      });
+  }
+
+  var alreadyLit = false;
+  try { alreadyLit = localStorage.getItem('reina_candle_lit') === '1'; } catch(e) {}
+  if (alreadyLit) disableBtn('Your candle is lit');
+
+  loadCandles();
 })();
 
 // ===== AUDIO WAVEFORMS =====
