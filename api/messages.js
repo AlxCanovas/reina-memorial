@@ -1,6 +1,7 @@
 import { kv } from '@vercel/kv';
 import { randomUUID } from 'crypto';
 import { notifyTelegram } from './notify.js';
+import { checkText } from './_moderation.js';
 
 const MESSAGES_KEY = 'memorial:messages';
 const MAX_MESSAGES = 500;
@@ -16,35 +17,6 @@ async function checkRate(ip) {
   return count <= RATE_LIMIT;
 }
 
-const BLOCKED_WORDS = [
-  'fuck','shit','damn','ass','bitch','bastard','dick','cock','pussy','cunt',
-  'whore','slut','fag','nigger','nigga','retard','stfu','gtfo','lmao','lmfao',
-  'wtf','idiot','stupid','dumb','loser','trash','garbage','pathetic','disgusting',
-  'hate','haha','lol','jaja','troll','spam','scam','fake',
-  'puta','mierda','coño','pendejo','cabron','cabrón','chinga','verga','culo',
-  'maricón','maricon','estupido','estúpido','idiota','basura','odio',
-  'joder','hijo de puta','malparido','gonorrea','hp','ctm','ptm'
-];
-
-const BLOCKED_PATTERNS = [
-  /(.)\1{4,}/,
-  /^[^a-záéíóúñ]+$/i,
-  /https?:\/\//i,
-  /www\./i,
-  /\.com|\.net|\.org/i,
-];
-
-function isClean(text) {
-  const lower = text.toLowerCase().replace(/[^a-záéíóúñü\s]/g, '');
-  const words = lower.split(/\s+/);
-  for (const word of words) {
-    if (BLOCKED_WORDS.includes(word)) return false;
-  }
-  for (const pattern of BLOCKED_PATTERNS) {
-    if (pattern.test(text)) return false;
-  }
-  return true;
-}
 
 function makeId() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -96,8 +68,11 @@ export default async function handler(req, res) {
       if (name.length > 100 || message.length > 2000) {
         return res.status(400).json({ error: 'Name or message too long' });
       }
-      if (!isClean(name) || !isClean(message)) {
-        return res.status(400).json({ error: 'inappropriate' });
+      const rejection = checkText(name) || checkText(message);
+      if (rejection) {
+        // `reason` lets the client pick its own translated wording; `error`
+        // stays for any browser still running a cached copy of the old script.
+        return res.status(400).json({ error: 'inappropriate', reason: rejection });
       }
 
       const id = makeId();
@@ -136,8 +111,9 @@ export default async function handler(req, res) {
       if (message.length > 2000) {
         return res.status(400).json({ error: 'Message too long' });
       }
-      if (!isClean(message)) {
-        return res.status(400).json({ error: 'inappropriate' });
+      const rejection = checkText(message);
+      if (rejection) {
+        return res.status(400).json({ error: 'inappropriate', reason: rejection });
       }
 
       const all = await kv.lrange(MESSAGES_KEY, 0, -1) || [];

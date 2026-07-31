@@ -1,6 +1,7 @@
 import { put, del } from '@vercel/blob';
 import { kv } from '@vercel/kv';
 import { notifyTelegram } from './notify.js';
+import { checkText } from './_moderation.js';
 
 const PHOTOS_KEY = 'memorial:photos';
 const RATE_LIMIT = 15;
@@ -16,17 +17,6 @@ async function checkRate(ip) {
 export const config = {
   api: { bodyParser: { sizeLimit: '5mb' } }
 };
-
-const BLOCKED_WORDS = [
-  'fuck','shit','damn','bitch','bastard','dick','cock','pussy','cunt',
-  'whore','slut','nigger','nigga','retard','puta','mierda','coño',
-  'pendejo','cabron','cabrón','verga','maricón','maricon'
-];
-
-function isClean(text) {
-  const lower = text.toLowerCase().replace(/[^a-záéíóúñü\s]/g, '');
-  return !lower.split(/\s+/).some(w => BLOCKED_WORDS.includes(w));
-}
 
 function getCorsOrigin(req) {
   const origin = req.headers.origin || '';
@@ -66,8 +56,9 @@ export default async function handler(req, res) {
       if (caption && (typeof caption !== 'string' || caption.length > 500)) {
         return res.status(400).json({ error: 'Caption too long (max 500 characters)' });
       }
-      if (!isClean(name) || (caption && !isClean(caption))) {
-        return res.status(400).json({ error: 'Inappropriate content' });
+      const rejection = checkText(name) || checkText(caption);
+      if (rejection) {
+        return res.status(400).json({ error: 'Inappropriate content', reason: rejection });
       }
 
       const match = image.match(/^data:image\/(jpeg|png|webp);base64,(.+)$/);

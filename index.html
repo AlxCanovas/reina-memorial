@@ -3536,6 +3536,7 @@
       gbSuccess: 'Thank you for sharing.',
       gbError: 'Something went wrong. Please try again.',
       gbBlocked: 'Please keep your message respectful.',
+      gbBlockedLink: "Messages can't include links. Please remove it and try again.",
       flowerSub: 'Each memory receives a unique bouquet — like flowers left at a memorial',
       gbPhotoBtn: '+ Add photos',
       gbPhotoHint: 'Up to 5 photos',
@@ -3594,6 +3595,7 @@
       gbSuccess: 'Gracias por compartir.',
       gbError: 'Algo salió mal. Inténtalo de nuevo.',
       gbBlocked: 'Por favor, mantén tu mensaje respetuoso.',
+      gbBlockedLink: 'Los mensajes no pueden incluir enlaces. Por favor, quítalo e inténtalo de nuevo.',
       flowerSub: 'Cada recuerdo recibe un ramo único — como flores dejadas en un memorial',
       gbPhotoBtn: '+ Agregar fotos',
       gbPhotoHint: 'Hasta 5 fotos',
@@ -4178,7 +4180,8 @@
       .then(function (r) {
         return r.json().then(function (data) {
           if (!r.ok) {
-            if (data.error === 'inappropriate') throw new Error('blocked');
+            if (data.reason) throw new Error(data.reason);
+            if (data.error === 'inappropriate') throw new Error('language');
             throw new Error();
           }
           return data;
@@ -4195,7 +4198,7 @@
         setTimeout(function () { gbStatus.textContent = ''; }, 3000);
       })
       .catch(function (err) {
-        gbStatus.textContent = err && err.message === 'blocked' ? t.gbBlocked : t.gbError;
+        gbStatus.textContent = err && err.message === 'link' ? t.gbBlockedLink : err && (err.message === 'language' || err.message === 'blocked') ? t.gbBlocked : t.gbError;
       })
       .finally(function () {
         gbSubmit.disabled = false;
@@ -4238,7 +4241,8 @@
       .then(function (r) {
         return r.json().then(function (data) {
           if (!r.ok) {
-            if (data.error === 'inappropriate') throw new Error('blocked');
+            if (data.reason) throw new Error(data.reason);
+            if (data.error === 'inappropriate') throw new Error('language');
             throw new Error();
           }
           return data;
@@ -4260,7 +4264,7 @@
       setTimeout(function () { gbStatus.textContent = ''; }, 3000);
     })
     .catch(function (err) {
-      gbStatus.textContent = err && err.message === 'blocked' ? t.gbBlocked : t.gbError;
+      gbStatus.textContent = err && err.message === 'link' ? t.gbBlockedLink : err && (err.message === 'language' || err.message === 'blocked') ? t.gbBlocked : t.gbError;
     })
     .finally(function () {
       gbSubmit.disabled = false;
