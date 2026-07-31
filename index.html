@@ -42,9 +42,22 @@
     --mono: 'SF Mono', 'Fira Code', monospace;
   }
 
+  /* Drifting petals deliberately travel ~30px past both edges so they enter and
+     leave off-screen. `overflow-x: hidden` on body alone does not reliably
+     contain that on iOS Safari and in-app browsers — the document element can
+     still be panned sideways, which showed up as the page sitting slightly
+     off-centre at random moments. Clip at the root as well.
+     `clip` is preferred over `hidden` because it does not create a scroll
+     container; `hidden` stays first as the fallback for older browsers. */
+  html {
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
   body {
     font-family: var(--sans);
     overflow-x: hidden;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     background: var(--ivory);
     color: var(--text);
@@ -838,8 +851,13 @@
     97%  { opacity: var(--peak, 0.28); transform: translateX(calc(var(--travel) * 0.97)) translateY(var(--bob3, -4px)) rotate(calc(var(--spin) * 0.97)); }
     100% { opacity: 0; transform: translateX(var(--travel)) translateY(0) rotate(var(--spin)); }
   }
-  body.atmosphere-night .petal-layer { opacity: 0.12; }
-  body.atmosphere-dusk .petal-layer { opacity: 0.3; }
+  /* These multiply with each petal's own --peak (0.20–0.32), they do not
+     replace it. At the old values the petals landed at 0.03 opacity at night
+     and 0.06–0.10 at dusk — invisible, so from early evening onward the site
+     looked like it had no petals at all. Chosen so the product stays in the
+     0.10–0.24 range: still a suggestion of movement, but actually there. */
+  body.atmosphere-night .petal-layer { opacity: 0.5; }
+  body.atmosphere-dusk .petal-layer { opacity: 0.75; }
 
   /* ===== WIND STREAKS ===== */
   .wind-layer {
