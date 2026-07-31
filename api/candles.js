@@ -1,4 +1,5 @@
 import { kv } from '@vercel/kv';
+import { notifyTelegram } from './notify.js';
 
 const CANDLES_KEY = 'memorial:candles';
 const MAX_CANDLES = 2000;
@@ -18,8 +19,8 @@ function escapeHtml(str) {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', getCorsOrigin(req));
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -56,7 +57,25 @@ export default async function handler(req, res) {
       await kv.ltrim(CANDLES_KEY, 0, MAX_CANDLES - 1);
       await kv.set(rateKey, 1, { ex: RATE_WINDOW });
 
+      notifyTelegram(`🕯 ${clean} lit a candle for Reina`);
       return res.status(201).json({ success: true, candle });
+    }
+
+    if (req.method === 'DELETE') {
+      const adminKey = req.headers['x-admin-key'];
+      if (adminKey !== process.env.ADMIN_KEY) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      const { name } = req.body;
+      if (!name) return res.status(400).json({ error: 'Name required' });
+      const raw = await kv.lrange(CANDLES_KEY, 0, -1) || [];
+      const candles = raw.map(c => typeof c === 'string' ? JSON.parse(c) : c);
+      const idx = candles.findIndex(c => c.name === name);
+      if (idx === -1) return res.status(404).json({ error: 'Not found' });
+      const placeholder = '__DELETED__';
+      await kv.lset(CANDLES_KEY, idx, placeholder);
+      await kv.lrem(CANDLES_KEY, 1, placeholder);
+      return res.status(200).json({ success: true, deleted: name });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

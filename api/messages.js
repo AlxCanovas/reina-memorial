@@ -1,5 +1,6 @@
 import { kv } from '@vercel/kv';
 import { randomUUID } from 'crypto';
+import { notifyTelegram } from './notify.js';
 
 const MESSAGES_KEY = 'memorial:messages';
 const MAX_MESSAGES = 500;
@@ -118,6 +119,9 @@ export default async function handler(req, res) {
 
       await kv.lpush(MESSAGES_KEY, JSON.stringify(entry));
       await kv.ltrim(MESSAGES_KEY, 0, MAX_MESSAGES - 1);
+
+      const preview = message.trim().slice(0, 120) + (message.trim().length > 120 ? '…' : '');
+      notifyTelegram(`💌 ${name.trim()} left a message:\n"${preview}"`);
 
       const { editToken: _, ...safeEntry } = entry;
       return res.status(201).json({ success: true, entry: safeEntry, editToken });

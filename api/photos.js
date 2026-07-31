@@ -1,5 +1,6 @@
 import { put, del } from '@vercel/blob';
 import { kv } from '@vercel/kv';
+import { notifyTelegram } from './notify.js';
 
 const PHOTOS_KEY = 'memorial:photos';
 const RATE_LIMIT = 15;
@@ -97,6 +98,9 @@ export default async function handler(req, res) {
       };
 
       await kv.lpush(PHOTOS_KEY, photo);
+
+      const captionNote = caption ? `: "${caption.trim().slice(0, 80)}"` : '';
+      notifyTelegram(`📷 ${name.trim()} shared a photo${captionNote}`);
 
       return res.status(200).json({ photo });
     }
