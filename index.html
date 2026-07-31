@@ -851,13 +851,17 @@
     97%  { opacity: var(--peak, 0.28); transform: translateX(calc(var(--travel) * 0.97)) translateY(var(--bob3, -4px)) rotate(calc(var(--spin) * 0.97)); }
     100% { opacity: 0; transform: translateX(var(--travel)) translateY(0) rotate(var(--spin)); }
   }
-  /* These multiply with each petal's own --peak (0.20–0.32), they do not
-     replace it. At the old values the petals landed at 0.03 opacity at night
-     and 0.06–0.10 at dusk — invisible, so from early evening onward the site
-     looked like it had no petals at all. Chosen so the product stays in the
-     0.10–0.24 range: still a suggestion of movement, but actually there. */
-  body.atmosphere-night .petal-layer { opacity: 0.5; }
-  body.atmosphere-dusk .petal-layer { opacity: 0.75; }
+  /* These multiply with each petal's own --peak, they do not replace it. The
+     original values (0.12 night / 0.3 dusk) put the petals at 0.03–0.10 opacity
+     — invisible from early evening on. Measured by contrast against each
+     phase's background, the old petals sat at 1.06–1.18 where 1.0 is invisible
+     and 1.3 is the threshold of being clearly perceptible. Dusk was the worst
+     case, not night: pale yellow on a near-white background has almost no
+     contrast at any alpha, which is why raising opacity alone did not fix it.
+     Paired with the deeper gold palette in the script below, these land every
+     phase at 1.32–1.84. */
+  body.atmosphere-night .petal-layer { opacity: 0.8; }
+  body.atmosphere-dusk .petal-layer { opacity: 0.9; }
 
   /* ===== WIND STREAKS ===== */
   .wind-layer {
@@ -2459,41 +2463,80 @@
 (function() {
   var layer = document.getElementById('petal-layer');
   if (!layer) return;
-  var colors = ['#F2C94C', '#F5D76E', '#E8B828', '#D4A017', '#F0C040'];
-  var w = window.innerWidth;
-  var h = document.documentElement.scrollHeight || document.body.scrollHeight;
-  var petalCount = w < 640 ? 5 : 8;
+  // Deeper golds than the original pale-yellow set. The light yellows were
+  // nearly the same luminance as the ivory background, so in daylight and at
+  // dusk the petals washed out no matter how high their opacity went.
+  var colors = ['#D4A017', '#C8951A', '#E0AE24', '#B8860B', '#DCA818'];
 
-  for (var i = 0; i < petalCount; i++) {
-    var p = document.createElement('div');
-    p.className = 'sf-petal';
-    var size = 7 + Math.random() * 9;
-    var goRight = Math.random() > 0.3;
-    var spin = 80 + Math.random() * 260;
+  // Petals are spread down the whole page, so the count has to scale with page
+  // height — not be a flat number. A fixed 5 (mobile) / 8 (desktop) meant that
+  // on a phone, where the page is ~11 screens tall, most screens had no petal
+  // on them at all and scrolling showed nothing.
+  var PER_SCREEN_MOBILE = 3;
+  var PER_SCREEN_DESKTOP = 4;
+  var MAX_PETALS = 34; // transform/opacity only, so this stays GPU-cheap
 
-    p.style.width = size + 'px';
-    p.style.height = (size * 1.4) + 'px';
-    p.style.top = (Math.random() * h) + 'px';
-    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+  function buildPetals() {
+    var w = window.innerWidth;
+    var vh = window.innerHeight || 800;
+    // scrollHeight must be read *after* images and content have loaded. Reading
+    // it during parse returned a short page, which is why every petal used to
+    // land in the top half and the lower sections had none.
+    var h = document.documentElement.scrollHeight || document.body.scrollHeight;
 
-    if (goRight) {
-      p.style.left = '-30px';
-      p.style.setProperty('--travel', (w + 60) + 'px');
-      p.style.setProperty('--spin', spin + 'deg');
-    } else {
-      p.style.left = (w + 30) + 'px';
-      p.style.setProperty('--travel', -(w + 60) + 'px');
-      p.style.setProperty('--spin', (-spin) + 'deg');
+    var screens = Math.max(1, Math.ceil(h / vh));
+    var perScreen = w < 640 ? PER_SCREEN_MOBILE : PER_SCREEN_DESKTOP;
+    var petalCount = Math.min(MAX_PETALS, screens * perScreen);
+
+    layer.textContent = '';
+
+    for (var i = 0; i < petalCount; i++) {
+      var p = document.createElement('div');
+      p.className = 'sf-petal';
+      var size = 9 + Math.random() * 10;
+      var goRight = Math.random() > 0.3;
+      var spin = 80 + Math.random() * 260;
+
+      p.style.width = size + 'px';
+      p.style.height = (size * 1.4) + 'px';
+      // Distribute evenly across the page rather than purely at random, so no
+      // stretch of the page is left bare by chance.
+      p.style.top = ((i + Math.random()) * (h / petalCount)) + 'px';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+      if (goRight) {
+        p.style.left = '-30px';
+        p.style.setProperty('--travel', (w + 60) + 'px');
+        p.style.setProperty('--spin', spin + 'deg');
+      } else {
+        p.style.left = (w + 30) + 'px';
+        p.style.setProperty('--travel', -(w + 60) + 'px');
+        p.style.setProperty('--spin', (-spin) + 'deg');
+      }
+
+      p.style.setProperty('--bob1', (-18 + Math.random() * 14) + 'px');
+      p.style.setProperty('--bob2', (4 + Math.random() * 18) + 'px');
+      p.style.setProperty('--bob3', (-10 + Math.random() * 8) + 'px');
+      p.style.setProperty('--peak', (0.32 + Math.random() * 0.16).toFixed(2));
+      p.style.animationDuration = (8 + Math.random() * 8) + 's';
+      // Keep the first petals brief so the effect is visible on arrival rather
+      // than after an empty pause.
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      layer.appendChild(p);
     }
-
-    p.style.setProperty('--bob1', (-18 + Math.random() * 14) + 'px');
-    p.style.setProperty('--bob2', (4 + Math.random() * 18) + 'px');
-    p.style.setProperty('--bob3', (-10 + Math.random() * 8) + 'px');
-    p.style.setProperty('--peak', (0.2 + Math.random() * 0.15).toFixed(2));
-    p.style.animationDuration = (8 + Math.random() * 8) + 's';
-    p.style.animationDelay = (Math.random() * 8) + 's';
-    layer.appendChild(p);
   }
+
+  buildPetals();
+  // Rebuild once everything has loaded and the real page height is known.
+  window.addEventListener('load', function () { setTimeout(buildPetals, 300); });
+
+  // Rotation or a resize changes both the page height and the distance a petal
+  // must travel to cross the screen; rebuild rather than leave stale values.
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(buildPetals, 400);
+  });
 })();
 
 // ===== WIND GUSTS =====
