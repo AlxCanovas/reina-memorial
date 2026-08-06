@@ -2126,6 +2126,76 @@
     .starmap-facts { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .starmap-section .section-heading { font-size: 1.5rem; }
   }
+
+  /* ===== ADMIN MODE ===== */
+  /* Only ever visible to someone holding the admin link. Everything here is
+     inert until the body gets .is-admin, so a visitor cannot reach it by
+     editing the DOM in devtools — the delete buttons are not in the page at
+     all until the token has been verified against the server. */
+  .admin-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 2100;
+    display: none;
+    align-items: center;
+    gap: 14px;
+    padding: 9px 16px;
+    border-radius: 100px;
+    background: rgba(24,16,16,0.93);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
+  }
+  body.is-admin .admin-bar { display: flex; }
+  .admin-bar-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #E0AE24;
+    box-shadow: 0 0 8px rgba(224,174,36,0.8);
+  }
+  .admin-bar-exit {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.65);
+    background: none;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 100px;
+    padding: 4px 12px;
+    cursor: pointer;
+  }
+  .admin-bar-exit:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+
+  .admin-del {
+    position: absolute;
+    top: 6px; right: 6px;
+    z-index: 20;
+    width: 26px; height: 26px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(190,40,40,0.92);
+    color: #fff;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .admin-del:hover { background: #C0392B; transform: scale(1.1); }
+  .admin-del[disabled] { opacity: 0.5; cursor: default; transform: none; }
+  /* The containers these buttons pin to are not all positioned already. */
+  body.is-admin .guestbook-entry,
+  body.is-admin .candle-spot,
+  body.is-admin .mg-card,
+  body.is-admin .audio-card { position: relative; }
 </style>
 </head>
 <body>
@@ -2685,6 +2755,10 @@
   function makeSpot(name, state, timestamp) {
     var spot = document.createElement('div');
     spot.className = 'candle-spot' + (state ? ' ' + state : '');
+    // Name + timestamp identify a candle exactly; admin mode needs both to
+    // delete the right one when two people share a first name.
+    spot.setAttribute('data-candle-name', name || '');
+    if (timestamp) spot.setAttribute('data-candle-ts', timestamp);
     var dateHtml = timestamp ? '<div class="candle-date">' + fmtCandleDate(timestamp) + '</div>' : '';
     spot.innerHTML =
       '<div class="candle-glow-ring"></div>' +
@@ -2981,6 +3055,7 @@
   function makeCard(voice) {
     var card = document.createElement('div');
     card.className = 'audio-card';
+    card.setAttribute('data-voice-id', voice.id || '');
     card.setAttribute('data-audio-src', voice.audio);
     var playSvg = '<svg width="14" height="16" viewBox="0 0 14 16"><polygon points="2,0 14,8 2,16"/></svg>';
     var stopSvg = '<svg width="14" height="16" viewBox="0 0 16 16"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>';
@@ -4480,6 +4555,7 @@
           var firstIdx = galleryPhotos.indexOf(firstPhoto);
           var card = document.createElement('div');
           card.className = 'mg-card' + (group.photos.length > 1 ? ' stacked' : '');
+          card.setAttribute('data-photo-id', firstPhoto.id || '');
           card.style.setProperty('--rot', rotations[gi % rotations.length] + 'deg');
           var img = document.createElement('img');
           img.src = firstPhoto.url;
@@ -4533,6 +4609,194 @@
 
   loadMessages();
   loadGallery();
+})();
+</script>
+
+<!-- ===== ADMIN MODE ===== -->
+<!--
+  Moderation without a terminal.
+
+  Before this, removing one spam candle meant a curl request with an admin key
+  pulled out of Vercel's environment. In practice that meant it did not happen:
+  a test candle sat on the live memorial for a week. On a page that accepts
+  public submissions from strangers, "a developer has to be available" is not a
+  moderation policy.
+
+  The admin link is the credential. Visiting /#admin-<token> verifies the token
+  against the server, and if it checks out the page grows a delete button on
+  every visitor-submitted item — guestbook messages, candles, gallery photos,
+  voice memories. The token is then kept in localStorage so the link only has
+  to be opened once per device, and it is stripped from the address bar
+  immediately so it does not survive in screenshots, shared screens, or browser
+  history.
+
+  Two things worth knowing about the shape of this:
+
+  The buttons do not exist until the server has confirmed the token. This is
+  not a CSS class toggled over a hidden control — nothing is rendered and no
+  delete endpoint will answer without the header, so opening devtools and
+  unhiding things gets a visitor nothing.
+
+  A URL hash is never transmitted to the server, so the token cannot leak into
+  Vercel's request logs, the CDN, or a Referer header the way /admin?key=...
+  would.
+-->
+<div class="admin-bar" id="admin-bar">
+  <span class="admin-bar-dot"></span>
+  <span id="admin-bar-label">Admin mode</span>
+  <button class="admin-bar-exit" id="admin-bar-exit" type="button">Sign out</button>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'reina_admin_token';
+  var token = null;
+
+  // Each kind maps a rendered element back to the record it came from. The
+  // selectors depend on data attributes set at render time in the sections
+  // above; if one of those is ever renamed, that kind quietly stops offering
+  // a delete button rather than deleting the wrong thing.
+  var KINDS = [
+    { url: '/api/messages', sel: '.guestbook-entry[data-id]', what: 'this message',
+      body: function (el) { return { id: el.getAttribute('data-id') }; } },
+    { url: '/api/candles', sel: '.candle-spot[data-candle-ts]', what: 'this candle',
+      body: function (el) {
+        return {
+          name: el.getAttribute('data-candle-name'),
+          timestamp: Number(el.getAttribute('data-candle-ts'))
+        };
+      } },
+    { url: '/api/photos', sel: '.mg-card[data-photo-id]', what: 'this photo',
+      body: function (el) { return { id: el.getAttribute('data-photo-id') }; } },
+    { url: '/api/voice', sel: '.audio-card[data-voice-id]', what: 'this voice memory',
+      body: function (el) { return { id: el.getAttribute('data-voice-id') }; } }
+  ];
+
+  function readStored() {
+    try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+  }
+  function writeStored(t) {
+    try { localStorage.setItem(STORAGE_KEY, t); } catch (e) {}
+  }
+  function clearStored() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  }
+
+  // Pull the token out of the URL and erase it from the address bar in the
+  // same tick, so it is gone before anyone can photograph the screen.
+  function takeTokenFromUrl() {
+    var m = (location.hash || '').match(/^#admin-(.+)$/);
+    if (!m) return null;
+    try {
+      history.replaceState(null, '', location.pathname + location.search);
+    } catch (e) {
+      location.hash = '';
+    }
+    try { return decodeURIComponent(m[1]); } catch (e) { return m[1]; }
+  }
+
+  function verify(candidate) {
+    return fetch('/api/admin', {
+      headers: { 'x-admin-key': candidate },
+      cache: 'no-store'
+    }).then(function (r) { return r.ok; }).catch(function () { return false; });
+  }
+
+  function addButton(el, kind) {
+    if (el.querySelector(':scope > .admin-del')) return;
+    var btn = document.createElement('button');
+    btn.className = 'admin-del';
+    btn.type = 'button';
+    btn.title = 'Remove ' + kind.what;
+    btn.setAttribute('aria-label', 'Remove ' + kind.what);
+    btn.innerHTML = '&times;';
+    btn.addEventListener('click', function (e) {
+      // Gallery cards and audio cards already own their click; without this
+      // a delete would also open the lightbox behind the confirm dialog.
+      e.preventDefault();
+      e.stopPropagation();
+      remove(el, kind, btn);
+    });
+    el.appendChild(btn);
+  }
+
+  function remove(el, kind, btn) {
+    if (!window.confirm('Remove ' + kind.what + '? This cannot be undone.')) return;
+    btn.disabled = true;
+    fetch(kind.url, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': token },
+      body: JSON.stringify(kind.body(el))
+    })
+      .then(function (r) {
+        if (r.ok) {
+          // Each section renders inside its own closure, so there is no handle
+          // to re-render just one list. Moderation is rare and a reload is
+          // always correct, which is worth more here than saving a round trip.
+          location.reload();
+          return;
+        }
+        btn.disabled = false;
+        if (r.status === 401) {
+          window.alert('That admin link is no longer valid. Open a current one.');
+          signOut();
+        } else {
+          window.alert("Could not remove that — it may already be gone. Nothing was changed.");
+        }
+      })
+      .catch(function () {
+        btn.disabled = false;
+        window.alert('Network error. Nothing was changed.');
+      });
+  }
+
+  function decorate() {
+    if (!token) return;
+    KINDS.forEach(function (kind) {
+      document.querySelectorAll(kind.sel).forEach(function (el) {
+        addButton(el, kind);
+      });
+    });
+  }
+
+  function signOut() {
+    token = null;
+    clearStored();
+    document.body.classList.remove('is-admin');
+    document.querySelectorAll('.admin-del').forEach(function (b) { b.remove(); });
+  }
+
+  function enable(t) {
+    token = t;
+    writeStored(t);
+    document.body.classList.add('is-admin');
+    decorate();
+    // The four lists all load over the network and re-render well after this
+    // runs, and again after each language switch. Watching the tree is what
+    // keeps the buttons attached without reaching into any of those closures.
+    var obs = new MutationObserver(function () { decorate(); });
+    obs.observe(document.body, { childList: true, subtree: true });
+
+    var exit = document.getElementById('admin-bar-exit');
+    if (exit) exit.addEventListener('click', signOut);
+  }
+
+  var fromUrl = takeTokenFromUrl();
+  var candidate = fromUrl || readStored();
+  if (!candidate) return;
+
+  verify(candidate).then(function (ok) {
+    if (ok) {
+      enable(candidate);
+    } else if (fromUrl) {
+      // Only complain when someone deliberately opened a link. A stale token
+      // in storage just gets dropped without saying anything to a visitor.
+      clearStored();
+      window.alert('That admin link is not valid.');
+    } else {
+      clearStored();
+    }
+  });
 })();
 </script>
 </body>

@@ -1,5 +1,6 @@
 import { kv } from '@vercel/kv';
 import { notifyTelegram } from './notify.js';
+import { isAdmin, denyAdmin } from './_auth.js';
 
 const CANDLES_KEY = 'memorial:candles';
 const MAX_CANDLES = 2000;
@@ -62,15 +63,20 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      const adminKey = req.headers['x-admin-key'];
-      if (adminKey !== process.env.ADMIN_KEY) {
-        return res.status(401).json({ error: 'Unauthorized' });
+      if (!isAdmin(req)) return denyAdmin(res);
+
+      // Candles carry no id, so deletion used to match on name alone and
+      // removed whichever one came first. Two people named Maria light two
+      // candles; removing the spam one silently removes hers instead. The
+      // timestamp is already on every candle the client renders, so require
+      // both and match exactly.
+      const { name, timestamp } = req.body || {};
+      if (!name || typeof timestamp !== 'number') {
+        return res.status(400).json({ error: 'Name and timestamp required' });
       }
-      const { name } = req.body;
-      if (!name) return res.status(400).json({ error: 'Name required' });
       const raw = await kv.lrange(CANDLES_KEY, 0, -1) || [];
       const candles = raw.map(c => typeof c === 'string' ? JSON.parse(c) : c);
-      const idx = candles.findIndex(c => c.name === name);
+      const idx = candles.findIndex(c => c.name === name && c.timestamp === timestamp);
       if (idx === -1) return res.status(404).json({ error: 'Not found' });
       const placeholder = '__DELETED__';
       await kv.lset(CANDLES_KEY, idx, placeholder);

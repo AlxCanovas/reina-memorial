@@ -2,6 +2,7 @@ import { kv } from '@vercel/kv';
 import { randomUUID } from 'crypto';
 import { notifyTelegram } from './notify.js';
 import { checkText } from './_moderation.js';
+import { isAdmin, denyAdmin } from './_auth.js';
 
 const MESSAGES_KEY = 'memorial:messages';
 const MAX_MESSAGES = 500;
@@ -32,7 +33,7 @@ function getCorsOrigin(req) {
 
 const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, x-admin-key',
 };
 
 export default async function handler(req, res) {
@@ -144,10 +145,9 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      const { id, adminKey } = req.body;
-      if (!id || adminKey !== process.env.ADMIN_KEY) {
-        return res.status(403).json({ error: 'Forbidden' });
-      }
+      if (!isAdmin(req)) return denyAdmin(res);
+      const { id } = req.body || {};
+      if (!id) return res.status(400).json({ error: 'id required' });
 
       const all = await kv.lrange(MESSAGES_KEY, 0, -1) || [];
       for (let i = 0; i < all.length; i++) {

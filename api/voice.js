@@ -1,5 +1,6 @@
 import { kv } from '@vercel/kv';
 import { notifyTelegram } from './notify.js';
+import { isAdmin, denyAdmin } from './_auth.js';
 
 const VOICE_KEY = 'memorial:voices';
 const MAX_VOICES = 100;
@@ -21,7 +22,7 @@ function escapeHtml(str) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', getCorsOrigin(req));
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -85,10 +86,9 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      const { id, adminKey } = req.body || {};
-      if (!id || adminKey !== process.env.ADMIN_KEY) {
-        return res.status(403).json({ error: 'Forbidden' });
-      }
+      if (!isAdmin(req)) return denyAdmin(res);
+      const { id } = req.body || {};
+      if (!id) return res.status(400).json({ error: 'id required' });
       const all = await kv.lrange(VOICE_KEY, 0, -1) || [];
       for (let i = 0; i < all.length; i++) {
         const entry = typeof all[i] === 'string' ? JSON.parse(all[i]) : all[i];
