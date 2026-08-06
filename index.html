@@ -171,12 +171,15 @@
   }
 
   /* ---------- CANDLE WALL ---------- */
+  /* No z-index here. A positioned section with a z-index becomes a stacking
+     context, and an opaque background inside one hides every lower layer —
+     which is what buried the drifting petals on this section. Left as
+     position: relative so .sf-canvas and the candle track still anchor to it. */
   .candle-section {
     padding: 5rem 1.5rem;
     background: var(--night);
     position: relative;
     overflow: hidden;
-    z-index: 3;
   }
   .candle-section .section-heading {
     color: rgba(255,255,255,0.85);
@@ -744,12 +747,12 @@
   .vr-msg.success { color: #27ae60; }
 
   /* ---------- STAR MAP ---------- */
+  /* z-index deliberately omitted — see the note on .candle-section. */
   .starmap-section {
     padding: 0;
     background: var(--night);
     position: relative;
     overflow: hidden;
-    z-index: 3;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -825,19 +828,39 @@
   }
 
   /* ===== SUNFLOWER PETALS ===== */
+  /* This layer sits BEHIND every word on the page. It reached z-index 5 by
+     drifting upward one fix at a time, and at 5 it outranked all content:
+     headings and body copy are z-index 1, and the three sections that used to
+     carry z-index 3 capped their own contents at 3. Nothing on this page goes
+     above 3, so petals were painting over her photo, over the guestbook, over
+     the story text.
+
+     z-index: 0 is what puts it back where it belongs, but only in combination
+     with two other things, and it silently fails without either:
+       1. The div is placed AFTER </main>. Sections are positioned with
+          z-index: auto, so they paint in tree order against a z-index: 0
+          layer — before </main> the section backgrounds cover the petals.
+       2. .hero, .candle-section and .starmap-section no longer set z-index: 3.
+          Those three are opaque and would otherwise swallow this layer whole,
+          which is 40% of the page height including both dark sections.
+     Content stays at z-index 1 and so still paints on top. */
   .petal-layer {
     position: absolute;
     top: 0; left: 0;
     width: 100%;
     height: 0;
     pointer-events: none;
-    z-index: 5;
+    z-index: 0;
     overflow: visible;
   }
   .sf-petal {
     position: absolute;
     border-radius: 80% 0 55% 50% / 55% 0 80% 50%;
     opacity: 0;
+    /* Softens the hard edge so a petal reads as atmosphere rather than as an
+       object sitting on the page. Cheap: the blur is static, only transform
+       and opacity animate. */
+    filter: blur(0.7px);
     animation: petalWind linear infinite;
   }
   @keyframes petalWind {
@@ -851,25 +874,25 @@
     97%  { opacity: var(--peak, 0.28); transform: translateX(calc(var(--travel) * 0.97)) translateY(var(--bob3, -4px)) rotate(calc(var(--spin) * 0.97)); }
     100% { opacity: 0; transform: translateX(var(--travel)) translateY(0) rotate(var(--spin)); }
   }
-  /* These multiply with each petal's own --peak, they do not replace it. The
-     original values (0.12 night / 0.3 dusk) put the petals at 0.03–0.10 opacity
-     — invisible from early evening on. Measured by contrast against each
-     phase's background, the old petals sat at 1.06–1.18 where 1.0 is invisible
-     and 1.3 is the threshold of being clearly perceptible. Dusk was the worst
-     case, not night: pale yellow on a near-white background has almost no
-     contrast at any alpha, which is why raising opacity alone did not fix it.
-     Paired with the deeper gold palette in the script below, these land every
-     phase at 1.32–1.84. */
+  /* These multiply with each petal's own --peak, they do not replace it. Kept
+     at the values that were tuned when this layer painted in front of the text,
+     because they still hold behind it: with --peak now 0.19–0.28 they put the
+     petals at 0.152–0.224 at night and 0.171–0.252 at dusk. Checked in all four
+     phases after the move — night is the easy case, since gold on the dark sky
+     has enormous contrast at any alpha. Dusk remains the one to watch, deep gold
+     on near-white; lower these further and it is the phase that goes first. */
   body.atmosphere-night .petal-layer { opacity: 0.8; }
   body.atmosphere-dusk .petal-layer { opacity: 0.9; }
 
   /* ===== WIND STREAKS ===== */
+  /* Same bug as the petal layer, same fix: at z-index 4 these wisps crossed in
+     front of the text. Quieter about it only because they are near-white. */
   .wind-layer {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     pointer-events: none;
-    z-index: 4;
+    z-index: 0;
     overflow: hidden;
   }
   .wind-gust {
@@ -1047,12 +1070,12 @@
   }
 
   /* ---------- HERO ---------- */
+  /* z-index deliberately omitted — see the note on .candle-section. */
   .hero {
     min-height: 100vh;
     padding: 4rem 1.5rem 5rem;
     gap: 1.2rem;
     background: var(--ivory);
-    z-index: 3;
   }
   .hero-photo {
     width: clamp(150px, 32vw, 220px);
@@ -2112,9 +2135,6 @@
   <div class="atmosphere-bar-note" data-i18n="atmoNote">Reflecting the sky where she rests</div>
 </div>
 
-<div class="petal-layer" id="petal-layer"></div>
-<div class="wind-layer" id="wind-layer"></div>
-
 <main>
 
   <!-- HERO -->
@@ -2389,6 +2409,13 @@
 
 </main>
 
+<!-- Atmosphere layers sit after </main> on purpose. They paint at z-index 0,
+     and the sections are positioned with z-index: auto, so tree order decides:
+     from before <main> the section backgrounds covered them. Still absolutely
+     positioned against <body>, so petal top offsets are unchanged. -->
+<div class="petal-layer" id="petal-layer"></div>
+<div class="wind-layer" id="wind-layer"></div>
+
 <!-- sticky bar -->
 <div id="sticky-bar">
   <div class="sticky-progress">
@@ -2472,9 +2499,13 @@
   // height — not be a flat number. A fixed 5 (mobile) / 8 (desktop) meant that
   // on a phone, where the page is ~11 screens tall, most screens had no petal
   // on them at all and scrolling showed nothing.
-  var PER_SCREEN_MOBILE = 3;
-  var PER_SCREEN_DESKTOP = 4;
-  var MAX_PETALS = 34; // transform/opacity only, so this stays GPU-cheap
+  // Lowered from 3/4 per screen once the layer moved behind the text. In front
+  // of content a petal had to be caught in passing to register, so density did
+  // the work; behind it they are simply always there, and fewer of them reads
+  // calmer than more.
+  var PER_SCREEN_MOBILE = 2;
+  var PER_SCREEN_DESKTOP = 3;
+  var MAX_PETALS = 26; // transform/opacity only, so this stays GPU-cheap
 
   function buildPetals() {
     var w = window.innerWidth;
@@ -2517,7 +2548,10 @@
       p.style.setProperty('--bob1', (-18 + Math.random() * 14) + 'px');
       p.style.setProperty('--bob2', (4 + Math.random() * 18) + 'px');
       p.style.setProperty('--bob3', (-10 + Math.random() * 8) + 'px');
-      p.style.setProperty('--peak', (0.32 + Math.random() * 0.16).toFixed(2));
+      // Was 0.32–0.48, which was tuned to stay legible while painting on top of
+      // the text. Behind it there is no contrast fight to win, and that opacity
+      // just made the petals read as objects on the page.
+      p.style.setProperty('--peak', (0.19 + Math.random() * 0.10).toFixed(2));
       p.style.animationDuration = (8 + Math.random() * 8) + 's';
       // Keep the first petals brief so the effect is visible on arrival rather
       // than after an empty pause.
